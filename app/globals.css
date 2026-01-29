@@ -1,0 +1,296 @@
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN TOKENS - Girtonian LLC Portfolio
+   Editorial futurism with warm neutrals
+   ============================================ */
+
+:root {
+  /* === COLOR SYSTEM === */
+  /* Backgrounds - warm bias, editorial range */
+  --color-bg-canvas: 250 250 249; /* Off-white, not pure */
+  --color-bg-surface: 255 255 255; /* True white for cards */
+  --color-bg-sunken: 245 245 244; /* Recessed areas */
+  --color-bg-elevated: 255 255 255; /* Lifted cards */
+
+  /* Foreground - high contrast, accessible */
+  --color-fg-primary: 23 23 23; /* Body text (neutral-900) */
+  --color-fg-secondary: 82 82 82; /* Supporting text (neutral-600) */
+  --color-fg-tertiary: 163 163 163; /* Placeholder, meta (neutral-400) */
+  --color-fg-inverse: 250 250 249; /* On dark backgrounds */
+
+  /* Accent - single hue, multiple contexts */
+  --color-accent-primary: 15 23 42; /* Slate-900 for CTAs, links */
+  --color-accent-hover: 30 41 59; /* Slate-800 */
+  --color-accent-active: 51 65 85; /* Slate-700 */
+  --color-accent-muted: 100 116 139; /* Slate-500 */
+
+  /* System feedback */
+  --color-status-success: 5 150 105; /* Emerald-600 */
+  --color-status-warning: 217 119 6; /* Amber-600 */
+  --color-status-error: 220 38 38; /* Red-600 */
+  --color-status-info: 37 99 235; /* Blue-600 */
+
+  /* Boundaries & dividers */
+  --color-border-subtle: 229 229 229; /* Low-contrast dividers */
+  --color-border-default: 212 212 212; /* Standard borders */
+  --color-border-emphasis: 163 163 163; /* Active states, focus rings */
+
+  /* === TYPOGRAPHY === */
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+  --font-display: 'Schibsted Grotesk', Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+
+  /* === SPACING === */
+  --spacing-section-y: 5rem; /* 80px - vertical section padding (mobile) */
+  --spacing-section-y-lg: 8rem; /* 128px - vertical section padding (desktop) */
+  --spacing-container-x: 1.5rem; /* 24px - container padding */
+
+  /* === MOTION === */
+  /* Duration - Fibonacci-inspired */
+  --motion-duration-instant: 100ms;
+  --motion-duration-fast: 200ms;
+  --motion-duration-base: 300ms;
+  --motion-duration-slow: 500ms;
+  --motion-duration-glacial: 800ms;
+
+  /* Easing - named by intent */
+  --motion-easing-default: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --motion-easing-enter: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --motion-easing-exit: cubic-bezier(0.4, 0.0, 1, 1);
+  --motion-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --motion-easing-elastic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Stagger delays */
+  --motion-stagger-items: 50ms;
+  --motion-stagger-grid: 30ms;
+}
+
+/* Tailwind v4 theme configuration */
+@theme inline {
+  /* === COLORS === */
+  --color-bg-canvas: rgb(var(--color-bg-canvas));
+  --color-bg-surface: rgb(var(--color-bg-surface));
+  --color-bg-sunken: rgb(var(--color-bg-sunken));
+  --color-bg-elevated: rgb(var(--color-bg-elevated));
+
+  --color-fg-primary: rgb(var(--color-fg-primary));
+  --color-fg-secondary: rgb(var(--color-fg-secondary));
+  --color-fg-tertiary: rgb(var(--color-fg-tertiary));
+  --color-fg-inverse: rgb(var(--color-fg-inverse));
+
+  --color-accent-primary: rgb(var(--color-accent-primary));
+  --color-accent-hover: rgb(var(--color-accent-hover));
+  --color-accent-active: rgb(var(--color-accent-active));
+  --color-accent-muted: rgb(var(--color-accent-muted));
+
+  --color-status-success: rgb(var(--color-status-success));
+  --color-status-warning: rgb(var(--color-status-warning));
+  --color-status-error: rgb(var(--color-status-error));
+  --color-status-info: rgb(var(--color-status-info));
+
+  --color-border-subtle: rgb(var(--color-border-subtle));
+  --color-border-default: rgb(var(--color-border-default));
+  --color-border-emphasis: rgb(var(--color-border-emphasis));
+
+  /* === TYPOGRAPHY === */
+  --font-family-sans: var(--font-sans);
+  --font-family-display: var(--font-display);
+  --font-family-mono: var(--font-mono);
+
+  /* Type scale - minor third (1.200) */
+  --font-size-xs: 0.694rem; /* 11.1px */
+  --font-size-sm: 0.833rem; /* 13.3px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.2rem; /* 19.2px */
+  --font-size-xl: 1.44rem; /* 23px */
+  --font-size-2xl: 1.728rem; /* 27.6px */
+  --font-size-3xl: 2.074rem; /* 33.2px */
+  --font-size-4xl: 2.488rem; /* 39.8px */
+  --font-size-5xl: 2.986rem; /* 47.8px */
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-base: 0 2px 4px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 8px 0 rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 8px 16px 0 rgb(0 0 0 / 0.10);
+  --shadow-xl: 0 16px 32px 0 rgb(0 0 0 / 0.12);
+
+  /* === Z-INDEX === */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+  --z-tooltip: 1400;
+
+  /* === BREAKPOINTS === */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* === CONTAINER MAX-WIDTHS === */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1120px; /* Narrow for editorial feel */
+  --container-2xl: 1280px;
+}
+
+/* === BASE STYLES === */
+* {
+  border-color: rgb(var(--color-border-default));
+}
+
+body {
+  background: rgb(var(--color-bg-canvas));
+  color: rgb(var(--color-fg-primary));
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === FOCUS STATES (WCAG 2.2 compliant) === */
+*:focus-visible {
+  outline: 2px solid rgb(var(--color-accent-primary));
+  outline-offset: 2px;
+  border-radius: 0.125rem;
+}
+
+/* Remove default focus for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* === SELECTION === */
+::selection {
+  background-color: rgb(var(--color-accent-primary));
+  color: rgb(var(--color-fg-inverse));
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* === SMOOTH SCROLLING === */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* === UTILITY CLASSES === */
+.container-custom {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-container-x);
+  padding-right: var(--spacing-container-x);
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    max-width: var(--container-sm);
+  }
+}
+
+@media (min-width: 768px) {
+  .container-custom {
+    max-width: var(--container-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    max-width: var(--container-lg);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-custom {
+    max-width: var(--container-xl);
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-custom.wide {
+    max-width: var(--container-2xl);
+  }
+}
+
+/* === TYPOGRAPHY UTILITIES === */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* === ANIMATION UTILITIES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--motion-duration-base) var(--motion-easing-enter);
+}
+
+.animate-slide-up {
+  animation: slideUp var(--motion-duration-base) var(--motion-easing-enter);
+}
+
+.animate-slide-down {
+  animation: slideDown var(--motion-duration-base) var(--motion-easing-enter);
+}
