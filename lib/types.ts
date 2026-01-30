@@ -28,6 +28,34 @@ export interface CaseStudyMeta {
   featured?: boolean
 }
 
+/** Before/after comparison for case study sections */
+export interface BeforeAfter {
+  before: string[]
+  after: string[]
+}
+
+/** Single step in a flow (e.g. Vision → Bets → Execution) */
+export interface FlowStep {
+  label: string
+  description?: string
+}
+
+/** One section of a case study (title, body, optional quote, image, before/after, or flow) */
+export interface CaseStudySection {
+  title?: string
+  body?: string | string[]
+  quote?: string
+  image?: string
+  images?: string[]
+  beforeAfter?: BeforeAfter
+  flow?: FlowStep[]
+}
+
+/** Full case study content keyed by project slug */
+export interface CaseStudyContent {
+  sections: CaseStudySection[]
+}
+
 // === TIMELINE TYPES ===
 
 export interface TimelineItem {

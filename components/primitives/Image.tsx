@@ -32,6 +32,8 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       alt,
       priority = false,
       quality = 90,
+      width,
+      height,
       ...props
     },
     ref
@@ -43,13 +45,15 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
           alt={alt}
           priority={priority}
           quality={quality}
+          width={width}
+          height={height}
           className={cn('w-full h-auto', className)}
           {...props}
         />
       )
     }
 
-    // For fixed aspect ratios, use container wrapper
+    // For fixed aspect ratios, use container wrapper (fill mode — omit width/height)
     return (
       <div
         ref={ref}

@@ -7,6 +7,19 @@ import { Project, TimelineItem, Tool } from './types'
 
 export const projects: Project[] = [
   {
+    slug: 'signet-jewelers',
+    title: 'Turning Strategic Clarity into Compounding Growth at Signet',
+    role: 'Product & Design Strategy',
+    year: 2024,
+    client: 'Signet Jewelers',
+    tags: ['Product Strategy', 'Workshops', 'Vision', 'Product Playbook'],
+    thumbnail: '/ProductTeam-1.png',
+    featured: true,
+    description:
+      'Vision and Product Playbook workshops that turned ambiguity into clear product direction and execution rules.',
+    href: '/work/signet-jewelers',
+  },
+  {
     slug: 'kyzen-design-system',
     title: 'Kyzen Design System',
     role: 'Lead Designer',
