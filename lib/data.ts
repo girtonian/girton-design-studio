@@ -80,6 +80,18 @@ export const projects: Project[] = [
       'Led multiple enterprise design projects for Fortune 500 clients.',
     href: '/work/fjord-client-work',
   },
+  {
+    slug: 'makeshop-wayfinding',
+    title: 'MakeShop Wayfinding System',
+    role: 'Senior Creative Technologist',
+    year: 2019,
+    client: 'Accenture Interactive',
+    tags: ['Wayfinding', 'Environmental Design', 'User Research', 'Prototyping'],
+    thumbnail: 'https://placehold.co/600x400/1e3a5f/fafaf9?text=MakeShop+Wayfinding',
+    description:
+      'Designed and implemented comprehensive wayfinding system for innovation space, improving client navigation and conference room accessibility.',
+    href: '/work/makeshop-wayfinding',
+  },
 ]
 
 export const timelineItems: TimelineItem[] = [
