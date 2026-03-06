@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Motion System</title>
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — derived from your animation's visual language
+       ============================================================ */
+    :root {
+      --sage:        #8EAF8E;
+      --sage-light:  #C5DAC5;
+      --sage-faint:  #EEF5EE;
+      --ink:         #111110;
+      --ink-60:      rgba(17,17,16,.6);
+      --ink-20:      rgba(17,17,16,.12);
+      --white:       #FAFAF8;
+
+      /* Motion tokens — your animation in numbers */
+      --dur-fast:    180ms;
+      --dur-mid:     380ms;
+      --dur-slow:    600ms;
+      --dur-drift:   8000ms;   /* fragment orbit speed */
+      --ease-out:    cubic-bezier(.22, 1, .36, 1);
+      --ease-in-out: cubic-bezier(.45, 0, .55, 1);
+
+      /* Fragment float easing — matches the unhurried drift in your video */
+      --ease-float: linear(
+        0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49,
+        0.64, 0.81, 1, 0.91, 0.84, 0.79, 0.76, 0.75,
+        0.76, 0.79, 0.84, 0.91, 1
+      );
+    }
+
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       ACCESSIBILITY — always first
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .fragment { display: none; }
+    }
+
+    /* ============================================================
+       LAYOUT CHROME
+       ============================================================ */
+    .page-label {
+      position: fixed;
+      top: 24px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      z-index: 100;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 120px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .section-tag {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      margin-bottom: 32px;
+    }
+
+    .section-tag span {
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--ink-60);
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--ink-20);
+      margin: 0 48px;
+      max-width: calc(900px - 0px);
+    }
+
+    /* ============================================================
+       SECTION 01 — HERO & FRAGMENT DRIFT
+       ============================================================ */
+
+    /* @property for typed CSS variable animation */
+    @property --fragment-x {
+      syntax: '<percentage>';
+      inherits: false;
+      initial-value: 0%;
+    }
+    @property --fragment-y {
+      syntax: '<percentage>';
+      inherits: false;
+      initial-value: 0%;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* Floating geometric fragments — directly from your animation's language */
+    .fragment-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .fragment {
+      position: absolute;
+      border: 1.5px solid var(--sage);
+      opacity: 0;
+      will-change: transform, opacity;
+      animation: fragment-life var(--drift-dur, var(--dur-drift)) var(--drift-delay, 0ms)
+                 infinite var(--ease-float);
+    }
+
+    .fragment.rect   { width: 14px; height: 6px; }
+    .fragment.square { width: 7px;  height: 7px; }
+    .fragment.bar    { width: 22px; height: 3px; }
+    .fragment.tiny   { width: 4px;  height: 4px; }
+    .fragment.tri {
+      width: 0; height: 0;
+      border: none;
+      border-left:  5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 9px solid var(--sage-light);
+    }
+
+    /* Each fragment has its own CSS vars set inline for position / timing */
+    @keyframes fragment-life {
+      0%   { opacity: 0;    transform: translate(var(--fx, 20vw), var(--fy, 30vh)) rotate(var(--fr, 0deg)); }
+      12%  { opacity: .55; }
+      88%  { opacity: .55; }
+      100% { opacity: 0;    transform: translate(var(--fx2, 25vw), var(--fy2, 20vh)) rotate(var(--fr2, 45deg)); }
+    }
+
+    /* Hero type */
+    .hero-eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-headline {
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-sub {
+      margin-top: 32px;
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--ink-60);
+      max-width: 460px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================================================
+       ANIMATION 01 — STAGGERED REVEAL
+       Jakub's enter recipe: opacity + translateY + blur
+       ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(5px);
+      transition:
+        opacity  var(--dur-slow) var(--ease-out),
+        transform var(--dur-slow) var(--ease-out),
+        filter   var(--dur-slow) var(--ease-out);
+      will-change: transform, opacity, filter;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0px);
+    }
+
+    /* stagger siblings with delay */
+    .reveal:nth-child(2) { transition-delay: 80ms; }
+    .reveal:nth-child(3) { transition-delay: 160ms; }
+    .reveal:nth-child(4) { transition-delay: 240ms; }
+    .reveal:nth-child(5) { transition-delay: 320ms; }
+    .reveal:nth-child(6) { transition-delay: 400ms; }
+
+    /* ============================================================
+       ANIMATION 02 — PROJECT CARDS
+       Hover: lift + shadow deepens + subtle scale
+       ============================================================ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .card {
+      border: 1px solid var(--ink-20);
+      padding: 32px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: var(--white);
+      /* Jakub: multi-layer shadow over single border */
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.04),
+        0 1px 2px -1px rgba(0,0,0,.05),
+        0 2px 8px 0 rgba(0,0,0,.03);
+      transition:
+        transform   var(--dur-mid) var(--ease-out),
+        box-shadow  var(--dur-mid) var(--ease-out),
+        border-color var(--dur-mid) var(--ease-out);
+      will-change: transform, box-shadow;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg in oklch, var(--sage-faint) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity var(--dur-mid) var(--ease-out);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--sage-light);
+      box-shadow:
+        0 0 0 1px rgba(142,175,142,.25),
+        0 4px 12px -2px rgba(142,175,142,.15),
+        0 12px 32px -4px rgba(0,0,0,.08);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-index {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      color: var(--sage);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -.01em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--ink-60);
+      line-height: 1.6;
+    }
+
+    /* Arrow that slides in on hover */
+    .card-arrow {
+      position: absolute;
+      bottom: 28px; right: 28px;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: translate(-4px, 4px);
+      transition:
+        opacity   var(--dur-mid) var(--ease-out),
+        transform var(--dur-mid) var(--ease-out);
+      color: var(--sage);
+    }
+
+    .card:hover .card-arrow {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* ============================================================
+       ANIMATION 03 — NAV LINK UNDERLINE
+       Emil-approved: high-frequency, keep it minimal
+       ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+      mix-blend-mode: multiply;
+    }
+
+    .nav-logo {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      text-decoration: none;
+      position: relative;
+      transition: color var(--dur-fast) var(--ease-out);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--sage);
+      transition: width var(--dur-mid) var(--ease-out);
+    }
+
+    .nav-link:hover { color: var(--ink); }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ============================================================
+       ANIMATION 04 — CTA BUTTON
+       Magnetic + fill + icon translate
+       ============================================================ */
+    .cta-wrap {
+      margin-top: 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: transparent;
+      border: 1px solid var(--ink);
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition:
+        color var(--dur-mid) var(--ease-out),
+        border-color var(--dur-mid) var(--ease-out);
+    }
+
+    /* Fill sweep — enters from left */
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink);
+      transform: translateX(-101%);
+      transition: transform var(--dur-mid) var(--ease-out);
+    }
+
+    .cta-btn:hover::before { transform: translateX(0); }
+    .cta-btn:hover { color: var(--white); }
+
+    .cta-btn span { position: relative; z-index: 1; }
+
+    .cta-btn .btn-arrow {
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+      transition: transform var(--dur-mid) var(--ease-out);
+    }
+    .cta-btn:hover .btn-arrow { transform: translateX(4px); }
+
+    /* ============================================================
+       ANIMATION 05 — SECTION COUNTER / ROLE TAG
+       A small ornamental detail that types-in on scroll
+       ============================================================ */
+    .role-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .role-tag {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid var(--ink-20);
+      color: var(--ink-60);
+      transition:
+        border-color var(--dur-mid) var(--ease-out),
+        color        var(--dur-mid) var(--ease-out),
+        background   var(--dur-mid) var(--ease-out);
+    }
+
+    .role-tag:hover {
+      border-color: var(--sage);
+      color: var(--sage);
+      background: var(--sage-faint);
+    }
+
+    /* ============================================================
+       ANIMATION 06 — SCROLL PROGRESS LINE
+       Thin sage line that draws down the left edge
+       ============================================================ */
+    .scroll-line {
+      position: fixed;
+      left: 0; top: 0;
+      width: 2px;
+      background: var(--sage);
+      transform-origin: top;
+      transform: scaleY(0);
+      z-index: 200;
+      will-change: transform;
+    }
+
+    /* ============================================================
+       ANIMATION 07 — CASE STUDY FIGURE
+       Isometric card — echoes your animation's aesthetic
+       ============================================================ */
+    .iso-demo {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .iso-card {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      flex-shrink: 0;
+    }
+
+    /* Isometric surface */
+    .iso-surface {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border: 1.5px solid var(--sage);
+      transform: rotateX(55deg) rotateZ(45deg);
+      transform-style: preserve-3d;
+      top: 30px; left: 30px;
+    }
+
+    .iso-surface::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--sage-faint);
+    }
+
+    /* Orbiting fragments on the iso card — matches the video exactly */
+    .iso-frag {
+      position: absolute;
+      border: 1.5px solid var(--sage-light);
+      animation: iso-orbit var(--orb-dur, 9s) var(--orb-delay, 0s) infinite linear;
+      will-change: transform, opacity;
+    }
+
+    @keyframes iso-orbit {
+      0%   { opacity: 0; transform: translate(var(--ox1), var(--oy1)) rotate(0deg); }
+      15%  { opacity: .6; }
+      85%  { opacity: .6; }
+      100% { opacity: 0; transform: translate(var(--ox2), var(--oy2)) rotate(var(--or2, 30deg)); }
+    }
+
+    /* ============================================================
+       ANIMATION 08 — CURSOR GEOMETRY
+       A tiny geometric shape that follows the cursor with lag
+       ============================================================ */
+    .cursor-geo {
+      position: fixed;
+      width: 12px; height: 12px;
+      border: 1.5px solid var(--sage);
+      pointer-events: none;
+      z-index: 9999;
+      top: 0; left: 0;
+      transform: translate(-50%, -50%);
+      transition:
+        transform 0ms,
+        opacity var(--dur-mid) var(--ease-out);
+      will-change: transform;
+    }
+
+    /* lagging follower */
+    .cursor-follower {
+      position: fixed;
+      width: 4px; height: 4px;
+      background: var(--sage);
+      pointer-events: none;
+      z-index: 9998;
+      top: 0; left: 0;
+      border-radius: 0;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+
+    /* ============================================================
+       DEMO SECTION TYPOGRAPHY
+       ============================================================ */
+    .demo-label {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 400;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+
+    .body-copy {
+      font-size: 15px;
+      color: var(--ink-60);
+      line-height: 1.75;
+      max-width: 520px;
+      margin-top: 16px;
+    }
+
+    /* ============================================================
+       ABOUT SECTION
+       ============================================================ */
+    .about-split {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 48px;
+    }
+
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ink-20);
+      font-size: 13px;
+      color: var(--ink-60);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated fill bar behind each skill */
+    .skill-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: var(--skill-w, 0%);
+      background: var(--sage-faint);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.8s var(--ease-out);
+    }
+
+    .skill-row.visible::before { transform: scaleX(1); }
+
+    .skill-name { position: relative; z-index: 1; }
+    .skill-dot {
+      width: 5px; height: 5px;
+      background: var(--sage-light);
+      position: relative;
+      z-index: 1;
+      transition: background var(--dur-fast);
+    }
+    .skill-row:hover .skill-dot { background: var(--sage); }
+
+    /* ============================================================
+       CODE ANNOTATION PANELS
+       ============================================================ */
+    .code-note {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      background: var(--sage-faint);
+      border-left: 2px solid var(--sage);
+      padding: 16px 20px;
+      color: var(--ink-60);
+      margin-top: 32px;
+    }
+
+    .code-note strong { color: var(--sage); }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .site-footer {
+      padding: 64px 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--ink-20);
+    }
+
+    .footer-copy {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      color: var(--ink-60);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor geometry — peripheral detail, never intrusive -->
+  <div class="cursor-geo" id="cursorGeo"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- Scroll progress line -->
+  <div class="scroll-line" id="scrollLine"></div>
+
+  <!-- Floating fragment field — the ambient drift from your video -->
+  <div class="fragment-field" id="fragmentField"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="nav-logo">GS</a>
+    <ul class="nav-links">
+      <li><a href="#work" class="nav-link">Work</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#thinking" class="nav-link">Thinking</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-label">Portfolio Motion System — v1</div>
+
+  <!-- ── SECTION 01: HERO ──────────────────────────────────────── -->
+  <div class="hero">
+    <p class="hero-eyebrow reveal">Designer · Creative Technologist · Product Strategist</p>
+    <h1 class="hero-headline reveal">I make things<br>beautiful,<br>functional,<br>worth building.</h1>
+    <p class="hero-sub reveal">
+      From the first sketch to the shipped product — I design systems,
+      build prototypes, and shape strategy at the intersection of craft and clarity.
+    </p>
+    <div class="role-tags reveal">
+      <span class="role-tag">Product Design</span>
+      <span class="role-tag">Creative Tech</span>
+      <span class="role-tag">Strategy</span>
+      <span class="role-tag">Prototyping</span>
+    </div>
+    <div class="cta-wrap reveal">
+      <button class="cta-btn">
+        <span>View Work</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 02: WORK ──────────────────────────────────────── -->
+  <section id="work">
+    <p class="section-tag reveal"><span></span>02 — Selected Work</p>
+    <h2 class="reveal">Projects that<br>shaped things.</h2>
+    <p class="body-copy reveal">
+      A handful of pieces across product, visual design, and built prototypes — each one
+      chosen because the problem was interesting and the constraints were real.
+    </p>
+
+    <div class="cards-grid">
+      <div class="card reveal">
+        <div class="card-index">01 / Product Design</div>
+        <h3 class="card-title">Case Study Title</h3>
+        <p class="card-desc">A short framing line. The problem, your role, and what was interesting about it.</p>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card reveal">
+        <div class="card-index">02 / Creative Technology</div>
+        <h3 class="card-title">Case Study Title</h3>
+        <p class="card-desc">A short framing line. The problem, your role, and what was interesting about it.</p>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card reveal">
+        <div class="card-index">03 / Strategy</div>
+        <h3 class="card-title">Case Study Title</h3>
+        <p class="card-desc">A short framing line. The problem, your role, and what was interesting about it.</p>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card reveal">
+        <div class="card-index">04 / Built Prototype</div>
+        <h3 class="card-title">Case Study Title</h3>
+        <p class="card-desc">A short framing line. The problem, your role, and what was interesting about it.</p>
+        <div class="card-arrow">↗</div>
+      </div>
+    </div>
+
+    <div class="code-note reveal">
+      <strong>// MOTION NOTE — cards</strong><br>
+      Hover: translateY(-3px) + shadow deepens + sage border + gradient overlay + arrow slides in.<br>
+      All transitions share var(--dur-mid: 380ms) ease-out. No bounce — confidence, not playfulness.
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 03: ABOUT ─────────────────────────────────────── -->
+  <section id="about">
+    <p class="section-tag reveal"><span></span>03 — About</p>
+
+    <div class="iso-demo">
+      <!-- Isometric card element — echoes your Adobe Neo animation -->
+      <div class="iso-card reveal">
+        <div class="iso-surface"></div>
+        <!-- Orbiting fragments -->
+        <div class="iso-frag rect" style="width:18px;height:6px;--ox1:140px;--oy1:10px;--ox2:155px;--oy2:25px;--or2:12deg;--orb-dur:10s;--orb-delay:0s;"></div>
+        <div class="iso-frag tri" style="--ox1:155px;--oy1:60px;--ox2:165px;--oy2:45px;--orb-dur:13s;--orb-delay:2s;"></div>
+        <div class="iso-frag square" style="width:8px;height:8px;--ox1:145px;--oy1:120px;--ox2:160px;--oy2:110px;--orb-dur:11s;--orb-delay:4s;"></div>
+        <div class="iso-frag bar"  style="width:26px;height:4px;--ox1:5px;--oy1:160px;--ox2:10px;--oy2:148px;--or2:-8deg;--orb-dur:14s;--orb-delay:1.5s;"></div>
+        <div class="iso-frag tiny" style="--ox1:50px;--oy1:175px;--ox2:55px;--oy2:165px;--orb-dur:9s;--orb-delay:6s;"></div>
+      </div>
+
+      <div>
+        <h2 class="reveal">Craft,<br>curiosity,<br>and systems thinking.</h2>
+        <p class="body-copy reveal">
+          I work at the intersection of design, technology, and strategy — equally comfortable
+          in Figma, writing a prototype, or whiteboarding a product direction. The best problems
+          are the ones where all three matter at once.
+        </p>
+        <div class="code-note reveal">
+          <strong>// MOTION NOTE — iso card</strong><br>
+          Fragments: CSS @keyframes with per-element CSS vars for position offsets + rotation.<br>
+          Opacity fades in at 12%, holds, fades out at 88%. Matches your video's ambient drift exactly.
+        </div>
+      </div>
+    </div>
+
+    <div class="about-split" style="margin-top:80px;">
+      <div>
+        <p class="demo-label">Skills</p>
+        <div class="skill-row reveal" style="--skill-w:85%"><span class="skill-name">Product Design</span><span class="skill-dot"></span></div>
+        <div class="skill-row reveal" style="--skill-w:78%"><span class="skill-name">Creative Technology</span><span class="skill-dot"></span></div>
+        <div class="skill-row reveal" style="--skill-w:72%"><span class="skill-name">Prototyping</span><span class="skill-dot"></span></div>
+        <div class="skill-row reveal" style="--skill-w:68%"><span class="skill-name">Product Strategy</span><span class="skill-dot"></span></div>
+        <div class="skill-row reveal" style="--skill-w:60%"><span class="skill-name">Design Systems</span><span class="skill-dot"></span></div>
+      </div>
+      <div>
+        <p class="demo-label">Currently</p>
+        <p class="body-copy reveal" style="margin-top:0;">
+          Looking for the right problem — something at the edge of design and
+          technology where craft and strategy both matter.
+        </p>
+        <div class="cta-wrap reveal">
+          <button class="cta-btn">
+            <span>Get in Touch</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── SECTION 04: MOTION TOKENS ─────────────────────────────── -->
+  <section id="thinking">
+    <p class="section-tag reveal"><span></span>04 — Motion Reference</p>
+    <h2 class="reveal">The language<br>under everything.</h2>
+
+    <div style="margin-top:48px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="code-note reveal">
+        <strong>// ENTER ANIMATION (Jakub)</strong><br>
+        opacity: 0 → 1<br>
+        translateY: 10px → 0<br>
+        filter: blur(5px) → blur(0)<br>
+        duration: 600ms, ease-out<br>
+        stagger siblings: +80ms each
+      </div>
+      <div class="code-note reveal">
+        <strong>// EXIT ANIMATION (Jakub)</strong><br>
+        opacity: 1 → 0<br>
+        translateY: 0 → -8px  ← subtler than enter<br>
+        filter: blur(0) → blur(4px)<br>
+        duration: 300ms<br>
+        Exits: never compete for attention
+      </div>
+      <div class="code-note reveal">
+        <strong>// CARD HOVER</strong><br>
+        transform: translateY(-3px)<br>
+        box-shadow: deepens to sage tint<br>
+        border-color: → sage-light<br>
+        gradient overlay: fades in<br>
+        arrow: translate(-4px,4px) → (0,0)
+      </div>
+      <div class="code-note reveal">
+        <strong>// FRAGMENT DRIFT (Jhey @property)</strong><br>
+        @keyframes: opacity 0→.55→0<br>
+        translate: fx,fy → fx2,fy2 per element<br>
+        rotate: fr → fr2<br>
+        duration: 8–14s, linear float easing<br>
+        Each fragment: unique CSS vars inline
+      </div>
+      <div class="code-note reveal">
+        <strong>// SCROLL LINE</strong><br>
+        position: fixed, left edge<br>
+        scaleY: tied to window.scrollY %<br>
+        transform-origin: top<br>
+        color: var(--sage)<br>
+        width: 2px — edge detail only
+      </div>
+      <div class="code-note reveal">
+        <strong>// ACCESSIBILITY RULE</strong><br>
+        @media (prefers-reduced-motion)<br>
+        All durations: 0.01ms<br>
+        .fragment { display: none }<br>
+        — Never animate what isn't wanted.<br>
+        — Non-negotiable.
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p class="footer-copy">© 2026 — Portfolio Motion System</p>
+    <p class="footer-copy">Built with restraint.</p>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT — Intersection Observer + cursor + scroll + fragments
+       ============================================================ -->
+  <script>
+    /* ── 1. SCROLL REVEAL ──────────────────────────────────── */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    // Trigger hero immediately after a brief settle
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 100 + i * 90);
+    });
+
+    // All other .reveal elements via IntersectionObserver
+    document.querySelectorAll('section .reveal, .site-footer .reveal').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    /* ── 2. SCROLL PROGRESS LINE ───────────────────────────── */
+    const scrollLine = document.getElementById('scrollLine');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      scrollLine.style.transform = `scaleY(${pct})`;
+      scrollLine.style.height = '100vh';
+    }, { passive: true });
+
+    /* ── 3. CURSOR GEOMETRY ────────────────────────────────── */
+    const cursorGeo      = document.getElementById('cursorGeo');
+    const cursorFollower = document.getElementById('cursorFollower');
+    let mx = 0, my = 0, fx = 0, fy = 0;
+    let raf;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX;
+      my = e.clientY;
+      // Geo snaps to cursor immediately
+      cursorGeo.style.transform = `translate(calc(${mx}px - 50%), calc(${my}px - 50%))`;
+    });
+
+    // Follower lags behind with lerp
+    function lerpFollow() {
+      fx += (mx - fx) * 0.08;
+      fy += (my - fy) * 0.08;
+      cursorFollower.style.transform = `translate(calc(${fx}px - 50%), calc(${fy}px - 50%))`;
+      raf = requestAnimationFrame(lerpFollow);
+    }
+    lerpFollow();
+
+    // Cursor scales on hoverable elements
+    document.querySelectorAll('a, button, .card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursorGeo.style.transform += ' scale(1.8) rotate(45deg)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursorGeo.style.transform = `translate(calc(${mx}px - 50%), calc(${my}px - 50%))`;
+      });
+    });
+
+    /* ── 4. AMBIENT FRAGMENT FIELD ─────────────────────────── */
+    (function buildFragmentField() {
+      const field = document.getElementById('fragmentField');
+      const types  = ['rect', 'square', 'bar', 'tiny', 'tri'];
+
+      // Fragment config: position ranges and timing variation
+      const configs = [
+        { type:'rect',   fx:'8vw',  fy:'15vh', fx2:'12vw',  fy2:'8vh',  fr:'-10deg', fr2:'5deg',  dur:11000, delay:0     },
+        { type:'tri',    fx:'18vw', fy:'60vh', fx2:'22vw',  fy2:'55vh', fr:'0deg',   fr2:'20deg', dur:13000, delay:1200  },
+        { type:'bar',    fx:'75vw', fy:'20vh', fx2:'78vw',  fy2:'14vh', fr:'15deg',  fr2:'-5deg', dur:10000, delay:2400  },
+        { type:'square', fx:'85vw', fy:'45vh', fx2:'88vw',  fy2:'40vh', fr:'-5deg',  fr2:'12deg', dur:14000, delay:500   },
+        { type:'tiny',   fx:'55vw', fy:'8vh',  fx2:'58vw',  fy2:'15vh', fr:'0deg',   fr2:'30deg', dur:9000,  delay:3600  },
+        { type:'rect',   fx:'65vw', fy:'75vh', fx2:'60vw',  fy2:'70vh', fr:'20deg',  fr2:'8deg',  dur:12000, delay:1800  },
+        { type:'bar',    fx:'30vw', fy:'85vh', fx2:'35vw',  fy2:'78vh', fr:'-15deg', fr2:'0deg',  dur:10500, delay:4200  },
+        { type:'tri',    fx:'90vw', fy:'80vh', fx2:'87vw',  fy2:'88vh', fr:'0deg',   fr2:'-10deg',dur:15000, delay:600   },
+        { type:'square', fx:'42vw', fy:'30vh', fx2:'45vw',  fy2:'25vh', fr:'8deg',   fr2:'-5deg', dur:11500, delay:2800  },
+        { type:'tiny',   fx:'5vw',  fy:'70vh', fx2:'8vw',   fy2:'65vh', fr:'-20deg', fr2:'5deg',  dur:8500,  delay:1000  },
+      ];
+
+      configs.forEach(cfg => {
+        const el = document.createElement('div');
+        el.className = `fragment ${cfg.type}`;
+        el.style.cssText = [
+          `--fx:${cfg.fx}`, `--fy:${cfg.fy}`,
+          `--fx2:${cfg.fx2}`, `--fy2:${cfg.fy2}`,
+          `--fr:${cfg.fr}`, `--fr2:${cfg.fr2}`,
+          `--drift-dur:${cfg.dur}ms`,
+          `--drift-delay:${cfg.delay}ms`,
+        ].join(';');
+        field.appendChild(el);
+      });
+    })();
+
+    /* ── 5. SKILL BAR REVEAL ───────────────────────────────── */
+    const skillObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.skill-row').forEach(el => skillObserver.observe(el));
+  </script>
+</body>
+</html>

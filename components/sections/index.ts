@@ -4,3 +4,4 @@
  */
 
 export * from './WorkGrid'
+export * from './ParallaxGallery'

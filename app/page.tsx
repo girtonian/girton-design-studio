@@ -3,12 +3,12 @@
 import { motion } from 'framer-motion'
 import { Hero } from '@/components/patterns/Hero'
 import { SectionHeader } from '@/components/patterns/SectionHeader'
-import { ProjectCard } from '@/components/patterns/ProjectCard'
 import { Stat } from '@/components/patterns/Stat'
 import { Container } from '@/components/primitives/Container'
 import { Text } from '@/components/primitives/Text'
 import { LinkButton } from '@/components/primitives/LinkButton'
 import { Card } from '@/components/primitives/Card'
+import { ParallaxGallery } from '@/components/sections/ParallaxGallery'
 import { staggerContainer, staggerItem, useReducedMotion } from '@/lib/motion'
 import { projects, stats } from '@/lib/data'
 import { Zap, Layers, Users } from 'lucide-react'
@@ -20,7 +20,6 @@ import { Zap, Layers, Users } from 'lucide-react'
 
 export default function HomePage() {
   const shouldReduceMotion = useReducedMotion()
-  const featuredProjects = projects.filter((p) => p.featured).slice(0, 2)
 
   return (
     <>
@@ -38,37 +37,8 @@ export default function HomePage() {
         secondaryCta={{ label: 'About me', href: '/about' }}
       />
 
-      {/* Featured Work */}
-      <section className="py-20 md:py-32 bg-[rgb(var(--color-bg-sunken))]">
-        <Container>
-          <SectionHeader
-            eyebrow="Selected projects"
-            title="Recent work"
-            description="Enterprise design systems, Web3 platforms, and mobile experiences that drive results."
-            className="mb-16"
-          />
-
-          <motion.div
-            variants={staggerContainer(0.2)}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-          >
-            {featuredProjects.map((project) => (
-              <motion.div key={project.slug} variants={staggerItem(shouldReduceMotion)}>
-                <ProjectCard {...project} />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <div className="text-center mt-12">
-            <LinkButton href="/work" variant="secondary" size="lg">
-              View all projects
-            </LinkButton>
-          </div>
-        </Container>
-      </section>
+      {/* Featured Work — horizontal parallax gallery */}
+      <ParallaxGallery projects={projects} />
 
       {/* Capabilities */}
       <section className="py-20 md:py-32">
