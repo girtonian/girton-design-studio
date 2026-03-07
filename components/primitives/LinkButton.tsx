@@ -58,7 +58,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
     const baseClassName = cn(
       // Base styles
       'inline-flex items-center justify-center gap-2',
-      'font-medium transition-all duration-100',
+      'font-medium transition-all duration-[var(--motion-duration-hover)]',
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
       'focus-visible:outline-[rgb(var(--color-accent-primary))]',
       // Variant styles
@@ -78,7 +78,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
           target="_blank"
           rel="noopener noreferrer"
           className={baseClassName}
-          whileHover={{ y: -1, transition: { duration: 0.1 } }}
+          whileHover={{ y: -2, transition: { duration: 0.18, ease: [0, 0, 0.2, 1] } }}
           whileTap={{ scale: 0.98 }}
         >
           {children}
@@ -94,7 +94,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
       >
         <motion.span
           className="inline-flex items-center justify-center gap-2 w-full"
-          whileHover={{ y: -1, transition: { duration: 0.1 } }}
+          whileHover={{ y: -2, transition: { duration: 0.18, ease: [0, 0, 0.2, 1] } }}
           whileTap={{ scale: 0.98 }}
         >
           {children}

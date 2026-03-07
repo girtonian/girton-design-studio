@@ -71,14 +71,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         whileHover={
           whileHover ||
           (!isDisabled && variant !== 'link'
-            ? { y: -1, transition: { duration: 0.1 } }
+            ? { y: -2, transition: { duration: 0.18, ease: [0, 0, 0.2, 1] } }
             : undefined)
         }
         whileTap={whileTap || (!isDisabled ? { scale: 0.98 } : undefined)}
         className={cn(
           // Base styles
           'inline-flex items-center justify-center gap-2',
-          'font-medium transition-all duration-100',
+          'font-medium transition-all duration-[var(--motion-duration-hover)]',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
           'focus-visible:outline-[rgb(var(--color-accent-primary))]',
           'disabled:opacity-50 disabled:cursor-not-allowed',

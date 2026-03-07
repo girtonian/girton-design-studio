@@ -8,7 +8,6 @@ import { Container } from '@/components/primitives/Container'
 import { Link } from '@/components/primitives/Link'
 import { LinkButton } from '@/components/primitives/LinkButton'
 import { cn } from '@/lib/utils'
-import { slideDown, fadeIn } from '@/lib/motion'
 import { NavItem } from '@/lib/types'
 
 /**
@@ -58,7 +57,7 @@ export function Nav() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-[var(--z-sticky)] transition-all duration-200',
+        'sticky top-0 z-[var(--z-sticky)] transition-all duration-[var(--motion-duration-fast)]',
         isScrolled
           ? 'bg-[rgb(var(--color-bg-canvas)_/_0.8)] backdrop-blur-md shadow-sm'
           : 'bg-transparent'
@@ -114,22 +113,33 @@ export function Nav() {
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={fadeIn}
+            variants={{
+              initial: { opacity: 0 },
+              animate: { opacity: 1, transition: { duration: 0.2 } },
+              exit: { opacity: 0, transition: { duration: 0.15 } },
+            }}
             className="fixed inset-0 top-[72px] z-[var(--z-modal)] bg-[rgb(var(--color-bg-canvas))] md:hidden"
           >
             <Container className="py-8">
               <motion.div
-                variants={slideDown(false)}
+                initial={{ opacity: 0, y: -12, filter: 'blur(4px)' }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  filter: 'blur(0px)',
+                  transition: { type: 'spring', stiffness: 120, damping: 24, bounce: 0, duration: 0.4 },
+                }}
+                exit={{ opacity: 0, y: -12, filter: 'blur(4px)', transition: { duration: 0.2 } }}
                 className="flex flex-col gap-6"
               >
                 {navItems.map((item, index) => (
                   <motion.div
                     key={item.href}
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{
                       opacity: 1,
                       y: 0,
-                      transition: { delay: index * 0.1 },
+                      transition: { delay: 0.05 + index * 0.06, type: 'spring', stiffness: 120, damping: 24, bounce: 0 },
                     }}
                   >
                     <Link
@@ -146,11 +156,11 @@ export function Nav() {
                   </motion.div>
                 ))}
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{
                     opacity: 1,
                     y: 0,
-                    transition: { delay: navItems.length * 0.1 },
+                    transition: { delay: 0.05 + navItems.length * 0.06, type: 'spring', stiffness: 120, damping: 24, bounce: 0 },
                   }}
                   className="pt-4"
                 >

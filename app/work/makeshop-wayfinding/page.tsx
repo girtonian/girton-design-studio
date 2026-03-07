@@ -1,10 +1,19 @@
 import { Metadata } from 'next'
 import { Container } from '@/components/primitives/Container'
 import { Text } from '@/components/primitives/Text'
+import { Image } from '@/components/primitives/Image'
 import { Breadcrumbs } from '@/components/patterns/Breadcrumbs'
 import { LinkButton } from '@/components/primitives/LinkButton'
 import { projects } from '@/lib/data'
 import { ArrowLeft } from 'lucide-react'
+
+const WAYFINDING_IMAGES = [
+  { src: '/Wayfinding-1.png', alt: 'MakeShop wayfinding — main entry and orientation' },
+  { src: '/Wayfinding-2.png', alt: 'Directional signage at decision point' },
+  { src: '/Wayfinding-3.png', alt: 'Conference room identification signage' },
+  { src: '/Wayfinding-4.jpg', alt: 'Wayfinding in context' },
+  { src: '/Wayfinding-5.png', alt: 'Installed wayfinding system detail' },
+] as const
 
 /**
  * MakeShop Wayfinding Case Study
@@ -78,6 +87,18 @@ export default function MakeShopWayfindingPage() {
                   {tag}
                 </span>
               ))}
+            </div>
+
+            {/* Hero image */}
+            <div className="mt-10 rounded-lg overflow-hidden">
+              <Image
+                src={WAYFINDING_IMAGES[0].src}
+                alt={WAYFINDING_IMAGES[0].alt}
+                width={1200}
+                height={675}
+                aspectRatio="16/9"
+                className="w-full object-cover"
+              />
             </div>
           </div>
         </Container>
@@ -380,6 +401,22 @@ export default function MakeShopWayfindingPage() {
             comprehensive wayfinding coverage, signs appeared only where users needed guidance,
             reducing visual clutter while improving effectiveness.
           </Text>
+
+          {/* Implementation gallery */}
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {WAYFINDING_IMAGES.slice(1).map((img, index) => (
+              <div key={index} className="rounded-lg overflow-hidden">
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  width={800}
+                  height={600}
+                  aspectRatio="4/3"
+                  className="w-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
         </Container>
       </section>
 

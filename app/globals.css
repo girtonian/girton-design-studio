@@ -47,8 +47,9 @@
   --spacing-container-x: 1.5rem; /* 24px - container padding */
 
   /* === MOTION === */
-  /* Duration - Fibonacci-inspired */
+  /* Duration - Fibonacci-inspired; hover 150–200ms for polish */
   --motion-duration-instant: 100ms;
+  --motion-duration-hover: 180ms;
   --motion-duration-fast: 200ms;
   --motion-duration-base: 300ms;
   --motion-duration-slow: 500ms;
@@ -293,4 +294,50 @@ body {
 
 .animate-slide-down {
   animation: slideDown var(--motion-duration-base) var(--motion-easing-enter);
+}
+
+/* Polish transitions — 150–200ms for hover/focus (Jakub) */
+.transition-polish {
+  transition-duration: var(--motion-duration-hover);
+  transition-timing-function: var(--motion-easing-default);
+}
+
+/* === SIGNATURE ANIMATIONS — Jhey-style @property techniques === */
+
+/* Typed CSS property enables smooth gradient angle interpolation */
+@property --hero-gradient-angle {
+  syntax: '<angle>';
+  initial-value: 120deg;
+  inherits: false;
+}
+
+/* Hero accent text — animated gradient shimmer (Jhey + Jakub: barely perceptible) */
+/* slate-900 → indigo-800 → slate-900, rotating via @property angle */
+/* Note: background-image longhand required — optimizer drops linear-gradient(var()) in shorthand */
+.hero-accent {
+  background-image: linear-gradient(
+    var(--hero-gradient-angle),
+    rgb(15 23 42) 0%,
+    rgb(55 48 163) 45%,
+    rgb(15 23 42) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: hero-hue-drift 9s ease-in-out infinite alternate;
+}
+
+@keyframes hero-hue-drift {
+  from { --hero-gradient-angle: 110deg; }
+  to   { --hero-gradient-angle: 250deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-accent {
+    animation: none;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    color: rgb(var(--color-accent-primary));
+  }
 }

@@ -54,15 +54,16 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           whileHover ||
           (isInteractive
             ? {
-                y: -2,
-                boxShadow: '0 8px 16px 0 rgb(0 0 0 / 0.10)',
-                transition: { duration: 0.2 },
+                y: -4,
+                boxShadow:
+                  '0 0 0 1px rgb(0 0 0 / 0.06), 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 8px 24px -4px rgb(0 0 0 / 0.06)',
+                transition: { duration: 0.18, ease: [0, 0, 0.2, 1] },
               }
             : undefined)
         }
         className={cn(
           'rounded-lg overflow-hidden',
-          'transition-shadow duration-200',
+          'transition-shadow duration-[var(--motion-duration-hover)]',
           variantStyles[variant],
           isInteractive && 'cursor-pointer',
           className

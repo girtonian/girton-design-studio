@@ -1,9 +1,11 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { Card } from '@/components/primitives/Card'
 import { Text } from '@/components/primitives/Text'
 import { Image } from '@/components/primitives/Image'
 import { cn } from '@/lib/utils'
+import { useReducedMotion, hoverTransition } from '@/lib/motion'
 import { Project } from '@/lib/types'
 
 /**
@@ -26,6 +28,8 @@ export function ProjectCard({
   featured = false,
   className,
 }: ProjectCardProps) {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <Card
       variant="outlined"
@@ -38,15 +42,21 @@ export function ProjectCard({
       )}
     >
       {/* Thumbnail */}
-      <div className="relative overflow-hidden">
+      <motion.div
+        className="relative overflow-hidden"
+        whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+        transition={hoverTransition}
+      >
         <Image
           src={thumbnail}
           alt={title}
           width={featured ? 1200 : 600}
           height={featured ? 675 : 400}
           aspectRatio="16/9"
-          className="group-hover:scale-105 transition-transform duration-500"
         />
+
+        {/* Hover gradient overlay — Jakub: materializes on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-[220ms] ease-out pointer-events-none" />
 
         {/* Featured badge */}
         {featured && (
@@ -54,7 +64,7 @@ export function ProjectCard({
             Featured
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Content */}
       <div className={cn('p-6', featured && 'md:p-8')}>

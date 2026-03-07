@@ -66,13 +66,55 @@ export function useReducedMotion(): boolean {
 
 /**
  * Framer Motion variant presets
+ * Jakub-style: enter with opacity + translateY + blur; exit subtler.
  */
+
+// Refined spring — professional polish, no overshoot (Jakub: bounce 0)
+export const springRefined = {
+  type: 'spring' as const,
+  stiffness: 120,
+  damping: 24,
+  bounce: 0,
+}
 
 // Basic fade in/out
 export const fadeIn: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
+}
+
+/** Jakub-style enter: opacity + translateY(8) + blur(4px) → materializing effect */
+export const enterPolish = (shouldReduce: boolean = false): Variants => ({
+  initial: {
+    opacity: 0,
+    y: shouldReduce ? 0 : 8,
+    filter: shouldReduce ? 'blur(0px)' : 'blur(4px)',
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { ...springRefined, duration: 0.45 },
+  },
+  exit: {
+    opacity: 0,
+    y: shouldReduce ? 0 : -12,
+    filter: shouldReduce ? 'blur(0px)' : 'blur(4px)',
+    transition: { duration: 0.25, ease: [0.4, 0, 1, 1] },
+  },
+})
+
+/** Subtle exit — smaller movement than enter (Jakub) */
+export const exitSubtle: Variants = {
+  initial: {},
+  animate: {},
+  exit: {
+    opacity: 0,
+    y: -12,
+    filter: 'blur(4px)',
+    transition: { duration: 0.2, ease: [0.4, 0, 1, 1] },
+  },
 }
 
 export const fadeInWithDuration = (duration: number = 0.3): Variants => ({
@@ -181,6 +223,11 @@ export const staggerItem = (shouldReduce: boolean = false): Variants => ({
   },
 })
 
+/** Stagger item with Jakub-style enter (blur + spring) — for hero, section headers */
+export const staggerItemPolish = (shouldReduce: boolean = false): Variants => ({
+  ...enterPolish(shouldReduce),
+})
+
 // Page transition (navigation category)
 export const pageTransition = (shouldReduce: boolean = false): Variants => {
   if (shouldReduce) {
@@ -261,6 +308,7 @@ export const viewportOptions = {
  * Spring presets for natural motion
  */
 export const spring = {
+  refined: springRefined,
   gentle: {
     type: 'spring' as const,
     stiffness: 100,
@@ -277,3 +325,6 @@ export const spring = {
     damping: 30,
   },
 }
+
+/** Hover/tap transition — 150–200ms for polish (Jakub) */
+export const hoverTransition = { duration: 0.18, ease: [0, 0, 0.2, 1] }

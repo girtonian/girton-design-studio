@@ -24,12 +24,13 @@ export interface LinkProps
 const variantStyles: Record<LinkVariant, string> = {
   default:
     'text-[rgb(var(--color-accent-primary))] underline-offset-4 hover:underline ' +
-    'transition-colors duration-100',
+    'transition-[color,text-decoration] duration-[var(--motion-duration-hover)]',
   subtle:
     'text-[rgb(var(--color-fg-secondary))] hover:text-[rgb(var(--color-accent-primary))] ' +
-    'transition-colors duration-100',
-  nav: 'text-[rgb(var(--color-fg-primary))] hover:text-[rgb(var(--color-accent-primary))] ' +
-    'transition-colors duration-100',
+    'transition-colors duration-[var(--motion-duration-hover)]',
+  nav:
+    'text-[rgb(var(--color-fg-primary))] hover:text-[rgb(var(--color-accent-primary))] ' +
+    'transition-colors duration-[var(--motion-duration-hover)]',
 }
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
@@ -95,7 +96,13 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         className={linkClassName}
         {...props}
       >
-        {children}
+        <motion.span
+          className="inline-flex items-center gap-1"
+          whileHover={{ x: 1 }}
+          transition={{ duration: 0.18, ease: [0, 0, 0.2, 1] }}
+        >
+          {children}
+        </motion.span>
       </NextLink>
     )
   }

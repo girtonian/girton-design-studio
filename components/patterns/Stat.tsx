@@ -34,8 +34,9 @@ export function Stat({
 
   const motionValue = useMotionValue(0)
   const springValue = useSpring(motionValue, {
-    damping: 50,
-    stiffness: 100,
+    damping: 24,
+    stiffness: 120,
+    bounce: 0,
   })
 
   const [displayValue, setDisplayValue] = useState('0')
@@ -78,9 +79,9 @@ export function Stat({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5 }}
+      transition={{ type: 'spring', stiffness: 120, damping: 24, bounce: 0, duration: 0.45 }}
       className="text-center"
     >
       <Text variant="h2" className="mb-2" aria-live="polite">

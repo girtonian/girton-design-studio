@@ -7,6 +7,19 @@ import { Project, TimelineItem, Tool } from './types'
 
 export const projects: Project[] = [
   {
+    slug: 'spiced-realms-fructasia',
+    title: 'The Spiced Realms of Fructasia',
+    role: 'Design & World-Building',
+    year: 2024,
+    client: 'Hackathon',
+    tags: ['Design System', 'World-Building', 'Character Design', 'Game Dev', 'AI-Assisted Art'],
+    thumbnail: 'https://placehold.co/1200x675/4a3728/fafaf9?text=Spiced+Realms+of+Fructasia',
+    featured: true,
+    description:
+      'A fantasy universe of sentient fruitcake characters built in ten days—character design, world-building, game development, and a design system that scales across any medium.',
+    href: '/work/spiced-realms-fructasia',
+  },
+  {
     slug: 'signet-jewelers',
     title: 'Turning Strategic Clarity into Compounding Growth at Signet',
     role: 'Product & Design Strategy',
@@ -100,7 +113,7 @@ export const projects: Project[] = [
     year: 2019,
     client: 'Accenture Interactive',
     tags: ['Wayfinding', 'Environmental Design', 'User Research', 'Prototyping'],
-    thumbnail: 'https://placehold.co/600x400/1e3a5f/fafaf9?text=MakeShop+Wayfinding',
+    thumbnail: '/Wayfinding-1.png',
     description:
       'Designed and implemented comprehensive wayfinding system for innovation space, improving client navigation and conference room accessibility.',
     href: '/work/makeshop-wayfinding',

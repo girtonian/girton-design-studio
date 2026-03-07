@@ -6,7 +6,8 @@ import { Container } from '@/components/primitives/Container'
 import { Text } from '@/components/primitives/Text'
 import { LinkButton } from '@/components/primitives/LinkButton'
 import { cn } from '@/lib/utils'
-import { slideUp, staggerContainer, staggerItem, useReducedMotion } from '@/lib/motion'
+import { staggerContainer, staggerItemPolish, useReducedMotion } from '@/lib/motion'
+import { MagneticButton } from '@/components/primitives/MagneticButton'
 
 /**
  * Full-viewport hero section
@@ -59,13 +60,13 @@ export function Hero({
 
       <Container size="lg">
         <motion.div
-          variants={staggerContainer(0.1)}
+          variants={staggerContainer(0.12)}
           initial="initial"
           animate="animate"
           className="max-w-4xl mx-auto text-center"
         >
           {/* Title */}
-          <motion.div variants={staggerItem(shouldReduceMotion)}>
+          <motion.div variants={staggerItemPolish(shouldReduceMotion)}>
             <Text
               variant="h1"
               className="text-4xl md:text-5xl lg:text-6xl mb-6"
@@ -77,7 +78,7 @@ export function Hero({
 
           {/* Subtitle */}
           {subtitle && (
-            <motion.div variants={staggerItem(shouldReduceMotion)}>
+            <motion.div variants={staggerItemPolish(shouldReduceMotion)}>
               <Text
                 variant="lead"
                 color="secondary"
@@ -92,13 +93,15 @@ export function Hero({
           {/* CTAs */}
           {(cta || secondaryCta) && (
             <motion.div
-              variants={staggerItem(shouldReduceMotion)}
+              variants={staggerItemPolish(shouldReduceMotion)}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               {cta && (
-                <LinkButton href={cta.href} size="lg">
-                  {cta.label}
-                </LinkButton>
+                <MagneticButton strength={10}>
+                  <LinkButton href={cta.href} size="lg">
+                    {cta.label}
+                  </LinkButton>
+                </MagneticButton>
               )}
               {secondaryCta && (
                 <LinkButton
@@ -114,20 +117,20 @@ export function Hero({
         </motion.div>
       </Container>
 
-      {/* Scroll indicator (optional) */}
-      {variant === 'default' && (
+      {/* Scroll indicator (optional) — refined spring, respects reduced motion */}
+      {variant === 'default' && !shouldReduceMotion && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
+          transition={{ delay: 0.9, type: 'spring', stiffness: 120, damping: 24, bounce: 0 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
           <motion.div
-            animate={{ y: [0, 8, 0] }}
+            animate={{ y: [0, 6, 0] }}
             transition={{
-              duration: 1.5,
+              duration: 2,
               repeat: Infinity,
-              ease: 'easeInOut',
+              ease: [0.4, 0, 0.2, 1],
             }}
             className="w-6 h-10 border-2 border-[rgb(var(--color-border-default))] rounded-full p-1"
           >

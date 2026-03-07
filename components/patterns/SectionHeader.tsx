@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Text } from '@/components/primitives/Text'
 import { cn } from '@/lib/utils'
-import { slideUp, useReducedMotion } from '@/lib/motion'
+import { enterPolish, useReducedMotion } from '@/lib/motion'
 
 /**
  * Reusable section header
@@ -31,8 +31,8 @@ export function SectionHeader({
     <motion.div
       initial="initial"
       whileInView="animate"
-      viewport={{ once: true, margin: '-100px' }}
-      variants={slideUp(shouldReduceMotion)}
+      viewport={{ once: true, margin: '-80px', amount: 0.3 }}
+      variants={enterPolish(shouldReduceMotion)}
       className={cn(
         align === 'center' && 'text-center',
         align === 'center' && 'mx-auto max-w-3xl',

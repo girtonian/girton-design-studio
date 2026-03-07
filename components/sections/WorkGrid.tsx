@@ -6,7 +6,7 @@ import { ProjectCard } from '@/components/patterns/ProjectCard'
 import { Container } from '@/components/primitives/Container'
 import { Text } from '@/components/primitives/Text'
 import { cn } from '@/lib/utils'
-import { staggerContainer, staggerItem, useReducedMotion } from '@/lib/motion'
+import { staggerContainer, staggerItemPolish, useReducedMotion } from '@/lib/motion'
 import { Project } from '@/lib/types'
 
 /**
@@ -37,13 +37,22 @@ export function WorkGrid({ projects, showFilters = true }: WorkGridProps) {
       <Container>
         {/* Filters */}
         {showFilters && (
-          <div className="mb-12 flex flex-wrap gap-3 justify-center">
+          <motion.div
+            className="mb-12 flex flex-wrap gap-3 justify-center"
+            initial="initial"
+            animate="animate"
+            variants={staggerContainer(0.04)}
+          >
             {allTags.map((tag) => (
-              <button
+              <motion.button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
+                variants={staggerItemPolish(shouldReduceMotion)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.18, ease: [0, 0, 0.2, 1] }}
                 className={cn(
-                  'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200',
+                  'px-4 py-2 rounded-full text-sm font-medium transition-colors duration-[var(--motion-duration-hover)]',
                   'hover:shadow-md',
                   selectedTag === tag
                     ? 'bg-[rgb(var(--color-accent-primary))] text-[rgb(var(--color-fg-inverse))]'
@@ -51,24 +60,25 @@ export function WorkGrid({ projects, showFilters = true }: WorkGridProps) {
                 )}
               >
                 {tag}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Grid */}
         <motion.div
           layout
-          variants={staggerContainer(0.1)}
+          variants={staggerContainer(0.08)}
           initial="initial"
-          animate="animate"
+          whileInView="animate"
+          viewport={{ once: true, margin: '-60px', amount: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {filteredProjects.map((project) => (
             <motion.div
               key={project.slug}
               layout
-              variants={staggerItem(shouldReduceMotion)}
+              variants={staggerItemPolish(shouldReduceMotion)}
               className={cn(project.featured && 'md:col-span-2 lg:col-span-2')}
             >
               <ProjectCard {...project} />
