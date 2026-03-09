@@ -7,6 +7,57 @@ import { Project, TimelineItem, Tool } from './types'
 
 export const projects: Project[] = [
   {
+    slug: 'project-kyzen',
+    title: 'Project Kyzen',
+    role: 'Lead UX Designer',
+    year: 2024,
+    client: 'Impact Theory Studios',
+    tags: ['Game UX', 'Product Design', 'Avatar Systems', 'Web3', 'Brand'],
+    thumbnail: 'https://placehold.co/1200x675/0f172a/4f8ce2?text=Project+Kyzen',
+    featured: true,
+    description:
+      'Three years designing a third-person battle arena — from wireframes through game HUD, avatar systems, Web3 marketplace, and brand guidelines.',
+    href: '/work/project-kyzen',
+  },
+  {
+    slug: 'merry-modz',
+    title: 'Merry Modz',
+    role: 'Lead Designer',
+    year: 2023,
+    client: 'Impact Theory Studios',
+    tags: ['Character Design', 'Web3 UX', 'NFT', 'Multi-Platform', 'Brand Systems'],
+    thumbnail: 'https://placehold.co/1200x675/1e1b4b/f5c519?text=Merry+Modz',
+    featured: true,
+    description:
+      'A 10,000-character 3D generative NFT franchise — trait systems, multi-platform identity, and high-stakes Web3 UX.',
+    href: '/work/merry-modz',
+  },
+  {
+    slug: 'tessello',
+    title: 'Tessello',
+    role: 'Designer & Builder',
+    year: 2026,
+    client: 'Contra × Figma Makeathon',
+    tags: ['Creative Technology', 'Figma Make', 'Generative Design', 'Design Tools'],
+    thumbnail: 'https://placehold.co/1200x675/1a1a2e/c8b6ff?text=Tessello',
+    featured: true,
+    description:
+      'A parametric pattern engine in Figma Make — 8 pattern types, SVG paste-to-tile, pattern stacking, three export formats.',
+    href: '/work/tessello',
+  },
+  {
+    slug: 'curmunchkins',
+    title: 'Curmunchkins',
+    role: 'Founder & Designer',
+    year: 2024,
+    client: 'Self-initiated',
+    tags: ['Edtech', 'Sensory-First Design', 'Neurodivergent', 'Founder', 'Accessibility'],
+    thumbnail: 'https://placehold.co/1200x675/fef3c7/78350f?text=Curmunchkins',
+    description:
+      'An edtech platform designed from the ground up for neurodivergent kids — sensory-first philosophy, accessibility as foundation.',
+    href: '/work/curmunchkins',
+  },
+  {
     slug: 'spiced-realms-fructasia',
     title: 'The Spiced Realms of Fructasia',
     role: 'Design & World-Building',
