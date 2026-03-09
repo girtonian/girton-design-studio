@@ -38,12 +38,22 @@ function ScrollProgress() {
 
 // ─── "In Progress" Callout ────────────────────────────────────────────────────
 
-function InProgressCallout({ body }: { body: string }) {
+function InProgressCallout({
+  body,
+  shouldReduce,
+}: {
+  body: string
+  shouldReduce: boolean
+}) {
   return (
     <div className="rounded-lg border border-dashed border-[rgb(var(--color-border-default))] bg-[rgb(var(--color-bg-sunken))] p-6 md:p-8 flex gap-4 items-start">
       <motion.div
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+        animate={shouldReduce ? { opacity: 1 } : { opacity: [0.4, 1, 0.4] }}
+        transition={
+          shouldReduce
+            ? undefined
+            : { repeat: Infinity, duration: 2, ease: 'easeInOut' }
+        }
         className="mt-0.5 shrink-0"
         aria-hidden="true"
       >
@@ -267,7 +277,7 @@ function AnimatedSectionBlock({
                     key={`inprog-${pi}`}
                     variants={staggerItem(shouldReduce)}
                   >
-                    <InProgressCallout body={paragraph} />
+                    <InProgressCallout body={paragraph} shouldReduce={shouldReduce} />
                   </motion.div>
                 )
               } else if (paragraph.startsWith('•')) {
