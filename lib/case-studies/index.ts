@@ -1,8 +1,16 @@
 import type { CaseStudyContent } from '@/lib/types'
 import { signetJewelersCaseStudy } from './signet-jewelers'
 import { spicedRealmsFructasiaCaseStudy } from './spiced-realms-fructasia'
+import { kyzenCaseStudy } from './project-kyzen'
+import { merryModzCaseStudy } from './merry-modz'
+import { tesselloCaseStudy } from './tessello'
+import { curmunchkinsCaseStudy } from './curmunchkins'
 
 export const caseStudyBySlug: Record<string, CaseStudyContent> = {
   'signet-jewelers': signetJewelersCaseStudy,
   'spiced-realms-fructasia': spicedRealmsFructasiaCaseStudy,
+  'project-kyzen': kyzenCaseStudy,
+  'merry-modz': merryModzCaseStudy,
+  'tessello': tesselloCaseStudy,
+  'curmunchkins': curmunchkinsCaseStudy,
 }

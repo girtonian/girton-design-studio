@@ -45,7 +45,7 @@ export function ProjectCard({
       <motion.div
         className="relative overflow-hidden"
         whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-        transition={hoverTransition}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
       >
         <Image
           src={thumbnail}

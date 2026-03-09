@@ -5,3 +5,4 @@
 
 export * from './WorkGrid'
 export * from './ParallaxGallery'
+export * from './CaseStudyContent'

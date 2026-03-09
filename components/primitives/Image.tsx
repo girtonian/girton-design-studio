@@ -54,9 +54,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     }
 
     // For fixed aspect ratios, use container wrapper with fill
-    // Remove width and height from props when using fill (omit so fill mode works)
-    const { width: _w, height: _h, ...fillProps } = props
-
+    // width/height already destructured above — remaining props safe to spread
     return (
       <div
         ref={ref}
@@ -72,7 +70,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
           quality={quality}
           fill
           className={cn('object-cover transition-opacity duration-300 ease-out', className)}
-          {...fillProps}
+          {...props}
         />
       </div>
     )
