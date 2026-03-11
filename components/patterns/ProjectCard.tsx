@@ -1,20 +1,17 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Card } from '@/components/primitives/Card'
-import { Text } from '@/components/primitives/Text'
-import { Image } from '@/components/primitives/Image'
-import { cn } from '@/lib/utils'
-import { useReducedMotion, hoverTransition } from '@/lib/motion'
+import NextLink from 'next/link'
 import { Project } from '@/lib/types'
 
 /**
- * Project showcase card
- * Displays project thumbnail with metadata
- * Optionally featured (larger layout)
+ * Portfolio-style project card — Playfair Display title, 1px border grid,
+ * sage hover background, mono index/year/arrow.
+ * No thumbnail — text-first, editorial aesthetic.
  */
 
-export interface ProjectCardProps extends Pick<Project, 'title' | 'role' | 'year' | 'tags' | 'thumbnail' | 'href' | 'featured'> {
+export interface ProjectCardProps
+  extends Pick<Project, 'title' | 'role' | 'year' | 'tags' | 'href' | 'description'> {
+  index: number
   className?: string
 }
 
@@ -23,85 +20,141 @@ export function ProjectCard({
   role,
   year,
   tags,
-  thumbnail,
   href,
-  featured = false,
-  className,
+  description,
+  index,
 }: ProjectCardProps) {
-  const shouldReduceMotion = useReducedMotion()
+  const isExternal = href?.startsWith('http')
 
-  return (
-    <Card
-      variant="outlined"
-      hoverable
-      href={href}
-      className={cn(
-        'group overflow-hidden',
-        featured && 'md:col-span-2',
-        className
-      )}
+  const content = (
+    <div
+      className="card-portfolio reveal"
+      style={{ height: '100%' }}
     >
-      {/* Thumbnail */}
-      <motion.div
-        className="relative overflow-hidden"
-        whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-        transition={{ duration: 0.18, ease: 'easeOut' }}
+      <p
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '10px',
+          letterSpacing: '.15em',
+          color: 'var(--sage)',
+          marginBottom: '28px',
+          position: 'relative',
+          zIndex: 1,
+        }}
       >
-        <Image
-          src={thumbnail}
-          alt={title}
-          width={featured ? 1200 : 600}
-          height={featured ? 675 : 400}
-          aspectRatio="16/9"
-        />
+        {String(index).padStart(2, '0')}
+      </p>
 
-        {/* Hover gradient overlay — Jakub: materializes on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-[220ms] ease-out pointer-events-none" />
+      <p
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '9px',
+          letterSpacing: '.12em',
+          textTransform: 'uppercase',
+          color: 'var(--ink-60)',
+          marginBottom: '16px',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        {tags.slice(0, 3).join(' · ')}
+      </p>
 
-        {/* Featured badge */}
-        {featured && (
-          <div className="absolute top-4 right-4 px-3 py-1 bg-[rgb(var(--color-accent-primary))] text-[rgb(var(--color-fg-inverse))] text-xs font-medium rounded-full">
-            Featured
-          </div>
-        )}
-      </motion.div>
+      <h2
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '28px',
+          fontWeight: 400,
+          letterSpacing: '-.01em',
+          lineHeight: 1.2,
+          marginBottom: '16px',
+          position: 'relative',
+          zIndex: 1,
+          color: 'var(--ink)',
+        }}
+      >
+        {title}
+      </h2>
 
-      {/* Content */}
-      <div className={cn('p-6', featured && 'md:p-8')}>
-        <Text
-          variant={featured ? 'h3' : 'h4'}
-          className={cn('mb-2', featured ? 'text-2xl' : 'text-xl')}
+      {description && (
+        <p
+          style={{
+            fontSize: '13.5px',
+            color: 'var(--ink-60)',
+            lineHeight: 1.65,
+            position: 'relative',
+            zIndex: 1,
+            maxWidth: '320px',
+          }}
         >
-          {title}
-        </Text>
+          {description}
+        </p>
+      )}
 
-        <div className="flex items-center gap-2 mb-4">
-          <Text variant="small" color="secondary">
-            {role}
-          </Text>
-          <span className="text-[rgb(var(--color-fg-tertiary))]">·</span>
-          <Text variant="small" color="secondary">
-            {year}
-          </Text>
-        </div>
+      <div
+        style={{
+          marginTop: '36px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            letterSpacing: '.12em',
+            color: 'var(--ink-60)',
+          }}
+        >
+          {role} · {year}
+        </span>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {tags.slice(0, 4).map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 text-xs font-medium bg-[rgb(var(--color-bg-sunken))] text-[rgb(var(--color-fg-secondary))] rounded"
-            >
-              {tag}
-            </span>
-          ))}
-          {tags.length > 4 && (
-            <span className="px-2 py-1 text-xs font-medium text-[rgb(var(--color-fg-tertiary))]">
-              +{tags.length - 4} more
-            </span>
-          )}
-        </div>
+        {href && (
+          <span
+            className="card-arrow-indicator"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '9px',
+              letterSpacing: '.15em',
+              textTransform: 'uppercase',
+              color: 'var(--sage)',
+              opacity: 0,
+              transform: 'translateX(-8px)',
+              transition: 'opacity 380ms cubic-bezier(.22,1,.36,1), transform 380ms cubic-bezier(.22,1,.36,1)',
+            }}
+          >
+            View
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        )}
       </div>
-    </Card>
+
+      <style>{`
+        .card-portfolio:hover .card-arrow-indicator {
+          opacity: 1 !important;
+          transform: translateX(0) !important;
+        }
+      `}</style>
+    </div>
+  )
+
+  if (!href) return content
+
+  return isExternal ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+      {content}
+    </a>
+  ) : (
+    <NextLink href={href} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+      {content}
+    </NextLink>
   )
 }

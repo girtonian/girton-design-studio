@@ -91,6 +91,180 @@ transition={{ type: "spring", duration: 0.55, bounce: 0.1 }}
 
 ---
 
+## Text Wrapping
+
+Use `text-wrap: balance` to distribute text evenly across lines and prevent orphaned words:
+
+```css
+h1, h2, h3, p {
+  text-wrap: balance;
+}
+```
+
+Use `text-wrap: pretty` for a similar result with a slightly different algorithm (slower, better for body copy).
+
+**When to use**:
+- Headlines and short copy that can orphan single words
+- UI labels and card titles
+- NOT for long paragraphs (balance works best under ~6 lines)
+
+---
+
+## Concentric Border Radius
+
+When nesting elements, the outer radius must equal the inner radius plus the padding. Mismatched radii make interfaces feel amateur.
+
+```
+outer radius = inner radius + padding
+```
+
+```css
+.card {
+  border-radius: 20px;
+  padding: 8px;
+}
+
+.card-inner {
+  border-radius: 12px; /* 20 - 8 = 12 */
+}
+```
+
+**The rule**: If the outer radius is 20px and the padding is 8px, the inner element should be 12px. Always.
+
+**Common mistake**: Using the same border radius on nested elements regardless of padding.
+
+---
+
+## Make Text Crispy
+
+On macOS, default font rendering uses subpixel antialiasing which can make text appear heavier than intended. Add antialiasing to the layout root:
+
+```css
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+```
+
+In Tailwind: add `antialiased` to the `<body>` or layout wrapper.
+
+**Effect**: Text renders slightly thinner and crisper — noticeable especially on light backgrounds with dark text.
+
+---
+
+## Tabular Numbers
+
+If numbers shift width as they update (counters, timers, scores), lock their width:
+
+```css
+.number {
+  font-variant-numeric: tabular-nums;
+}
+```
+
+In Tailwind: `tabular-nums` class.
+
+**Why**: Proportional numbers have different widths (1 is narrower than 8), causing layout shifts during updates. Tabular nums make all digits equal width.
+
+**Caveat**: Some fonts (e.g. Inter) visually alter numerals when this property is used — check the result.
+
+---
+
+## Make Animations Interruptible
+
+CSS transitions and keyframe animations behave differently when interrupted:
+
+| Type | Behavior when interrupted |
+|------|--------------------------|
+| CSS transition | Interpolates toward latest state — **interruptible** |
+| CSS keyframe | Runs fixed timeline, doesn't retarget — **not interruptible** |
+
+```css
+/* ✓ Interruptible — use for interactions */
+.button {
+  transition: transform 200ms ease;
+}
+
+/* ✗ Not interruptible — use for one-time staged sequences */
+@keyframes enter {
+  from { opacity: 0; transform: translateY(8px); }
+}
+```
+
+**Rule of thumb**:
+- CSS transitions → interactions (hover, toggle, click)
+- Keyframe animations → staged entrance sequences that run once
+
+**Why it matters**: If a user changes intent mid-animation (e.g. opens then immediately closes a dropdown), non-interruptible animations feel broken and stuck.
+
+---
+
+## Split and Stagger Entering Elements
+
+Instead of animating a single container, break content into chunks and stagger them individually:
+
+```jsx
+// Instead of this:
+<motion.div animate={{ opacity: 1 }}>
+  <Title />
+  <Description />
+  <Buttons />
+</motion.div>
+
+// Do this:
+<motion.div className="animate-enter" style={{ "--stagger": 1 }}>
+  <Title />
+</motion.div>
+<motion.div className="animate-enter" style={{ "--stagger": 2 }}>
+  <Description />
+</motion.div>
+<motion.div className="animate-enter" style={{ "--stagger": 3 }}>
+  <Buttons />
+</motion.div>
+```
+
+```css
+@keyframes enter {
+  from {
+    transform: translateY(8px);
+    filter: blur(5px);
+    opacity: 0;
+  }
+}
+
+.animate-enter {
+  animation: enter 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation-delay: calc(var(--delay, 0ms) * var(--stagger, 0));
+}
+```
+
+For maximum polish, split headlines into individual word `<span>`s with an 80ms delay each.
+
+**Why stagger?** Animating one big block feels like a wall. Staggering creates rhythm and hierarchy — the eye follows the sequence naturally.
+
+---
+
+## Add Outline to Images
+
+Add a subtle 1px overlay outline to images to create depth and a consistent edge:
+
+```css
+.image {
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px; /* inset so it doesn't affect layout */
+}
+
+.dark .image {
+  outline-color: rgba(255, 255, 255, 0.1);
+}
+```
+
+**Why `outline-offset: -1px`**: Keeps the outline inside the image boundary — no layout shift, no gap between image and outline.
+
+**When to use**: Design systems where cards and components already use borders; product shots on varied backgrounds; anywhere images feel "floating" without definition.
+
+---
+
 ## Shadows Instead of Borders
 
 In light mode, prefer subtle multi-layer box-shadows over solid borders:
@@ -283,12 +457,18 @@ A hint to the browser: "I'm about to animate these properties, please prepare."
 - **Over-animating** — If users notice the animation itself, it's too much
 - **Using the same animation everywhere** — Context should drive timing and easing choices
 - **Ignoring hover state transitions** — Even small transitions (150-200ms) feel more polished than instant changes
+- **Mismatched border radii on nested elements** — Always use concentric radius (outer = inner + padding)
+- **Not using text-wrap: balance** — Orphaned words in headlines feel unfinished
+- **Animating number counters without tabular-nums** — Creates distracting layout shifts
+- **Using keyframes for interactions** — They can't be interrupted; use CSS transitions instead
+- **Animating a single content block** — Split and stagger for rhythm and hierarchy
+- **Skipping image outlines** — Images without subtle outlines float disconnected from the layout
 
 ---
 
 ## Jakub's Technique Index
 
-From jakub.kr:
+From [jakub.kr](https://jakub.kr/writing/details-that-make-interfaces-feel-better):
 
 | Technique | Key Insight |
 |-----------|-------------|
@@ -302,6 +482,13 @@ From jakub.kr:
 | Icon Animations | Animate swaps with opacity + scale + blur |
 | Spring Animations | bounce: 0 for professional, bounce > 0 for playful |
 | Motion Gestures | Micro-interactions for tactile feedback |
+| Text Wrapping | text-wrap: balance prevents orphaned words |
+| Concentric Radius | outer = inner + padding, always |
+| Crispy Text | -webkit-font-smoothing: antialiased on macOS |
+| Tabular Numbers | font-variant-numeric: tabular-nums prevents width shifts |
+| Interruptible Animations | Transitions for interactions, keyframes for sequences |
+| Split & Stagger | Break content into chunks, delay each for rhythm |
+| Image Outlines | 1px inset outline adds depth and definition |
 
 ---
 

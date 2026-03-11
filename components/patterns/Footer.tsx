@@ -1,119 +1,101 @@
-import { Container } from '@/components/primitives/Container'
-import { Link } from '@/components/primitives/Link'
-import { Text } from '@/components/primitives/Text'
-import { Github, Linkedin, Mail } from 'lucide-react'
+'use client'
 
 /**
- * Global footer
- * Site map, social links, copyright
+ * Minimal footer — mono font, ink-60 text, matches portfolio.html footer.
  */
-
-const footerLinks = [
-  {
-    title: 'Navigation',
-    links: [
-      { label: 'Home', href: '/' },
-      { label: 'Work', href: '/work' },
-      { label: 'About', href: '/about' },
-      { label: 'Writing', href: '/writing' },
-    ],
-  },
-  {
-    title: 'Connect',
-    links: [
-      { label: 'Email', href: 'mailto:hello@girtonian.com' },
-      { label: 'LinkedIn', href: 'https://linkedin.com/in/girtonian' },
-      { label: 'GitHub', href: 'https://github.com/girtonian' },
-    ],
-  },
-]
-
-const socialLinks = [
-  {
-    platform: 'GitHub',
-    url: 'https://github.com/girtonian',
-    icon: Github,
-    label: 'View GitHub profile',
-  },
-  {
-    platform: 'LinkedIn',
-    url: 'https://linkedin.com/in/girtonian',
-    icon: Linkedin,
-    label: 'Connect on LinkedIn',
-  },
-  {
-    platform: 'Email',
-    url: 'mailto:hello@girtonian.com',
-    icon: Mail,
-    label: 'Send an email',
-  },
-]
-
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-[rgb(var(--color-bg-sunken))] border-t border-[rgb(var(--color-border-subtle))] mt-20">
-      <Container className="py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-          {/* Brand */}
-          <div className="md:col-span-4">
-            <Text variant="h4" className="mb-4">
-              Girtonian
-            </Text>
-            <Text variant="body" color="secondary" className="mb-6">
-              Design systems that scale. Products that feel human.
-            </Text>
+    <>
+      <hr className="ink-divider" />
+      <footer
+        style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          padding: '32px 48px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <style>{`
+          @media (max-width: 768px) {
+            .footer-inner {
+              flex-direction: column !important;
+              gap: 12px !important;
+              text-align: center !important;
+            }
+          }
+        `}</style>
+        <div
+          className="footer-inner"
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '.15em',
+              textTransform: 'uppercase',
+              color: 'var(--ink-60)',
+            }}
+          >
+            Jonathan Girton
+          </span>
 
-            {/* Social links */}
-            <div className="flex gap-4">
-              {socialLinks.map((social) => {
-                const Icon = social.icon
-                return (
-                  <Link
-                    key={social.platform}
-                    href={social.url}
-                    variant="subtle"
-                    external
-                    showExternalIcon={false}
-                    aria-label={social.label}
-                    className="p-2 hover:bg-[rgb(var(--color-bg-surface))] rounded-lg transition-colors"
-                  >
-                    <Icon size={20} />
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Links */}
-          <div className="md:col-span-8 grid grid-cols-2 gap-8 md:gap-12">
-            {footerLinks.map((group) => (
-              <div key={group.title}>
-                <Text variant="small" className="font-semibold mb-4 block">
-                  {group.title}
-                </Text>
-                <ul className="space-y-3">
-                  {group.links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} variant="subtle">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div
+            style={{
+              display: 'flex',
+              gap: '24px',
+              alignItems: 'center',
+            }}
+          >
+            {[
+              { label: 'Email',    href: 'mailto:hello@girtonian.com' },
+              { label: 'LinkedIn', href: 'https://linkedin.com/in/girtonian' },
+              { label: 'GitHub',   href: 'https://github.com/girtonian' },
+            ].map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith('mailto') ? undefined : '_blank'}
+                rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '9px',
+                  letterSpacing: '.15em',
+                  textTransform: 'uppercase',
+                  color: 'var(--ink-60)',
+                  textDecoration: 'none',
+                  transition: 'color 180ms',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--sage)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-60)')}
+              >
+                {link.label}
+              </a>
             ))}
           </div>
-        </div>
 
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-[rgb(var(--color-border-subtle))]">
-          <Text variant="small" color="tertiary" className="text-center">
-            © {currentYear} Girtonian LLC. All rights reserved.
-          </Text>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '9px',
+              letterSpacing: '.1em',
+              color: 'var(--ink-60)',
+              opacity: 0.5,
+            }}
+          >
+            © {currentYear} Girtonian LLC
+          </span>
         </div>
-      </Container>
-    </footer>
+      </footer>
+    </>
   )
 }

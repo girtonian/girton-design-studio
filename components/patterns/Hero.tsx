@@ -1,143 +1,166 @@
 'use client'
 
-import { ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Container } from '@/components/primitives/Container'
-import { Text } from '@/components/primitives/Text'
-import { LinkButton } from '@/components/primitives/LinkButton'
-import { cn } from '@/lib/utils'
-import { staggerContainer, staggerItemPolish, useReducedMotion } from '@/lib/motion'
-import { MagneticButton } from '@/components/primitives/MagneticButton'
+import NextLink from 'next/link'
 
 /**
- * Full-viewport hero section
- * Variants: default (minimal), with CTA, with background element (3D/gradient)
+ * Full-viewport hero — bottom-justified, Playfair Display headline,
+ * italic sage accent, role tags, ink CTA with sage slide hover.
+ * Matches portfolio.html hero section.
  */
-
-export type HeroVariant = 'default' | 'minimal'
-
-export interface HeroProps {
-  variant?: HeroVariant
-  title: ReactNode
-  subtitle?: string
-  cta?: {
-    label: string
-    href: string
-  }
-  secondaryCta?: {
-    label: string
-    href: string
-  }
-  backgroundElement?: ReactNode
-  className?: string
-}
-
-export function Hero({
-  variant = 'default',
-  title,
-  subtitle,
-  cta,
-  secondaryCta,
-  backgroundElement,
-  className,
-}: HeroProps) {
-  const shouldReduceMotion = useReducedMotion()
-
+export function Hero() {
   return (
     <section
-      className={cn(
-        'relative min-h-[90vh] flex items-center justify-center',
-        'py-20 md:py-32',
-        className
-      )}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        padding: '0 48px 80px',
+        maxWidth: '900px',
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1,
+      }}
+      className="hero-section"
     >
-      {/* Background element (optional 3D scene or gradient) */}
-      {backgroundElement && (
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          {backgroundElement}
-        </div>
-      )}
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-section {
+            padding: 0 !important;
+            justify-content: flex-end !important;
+          }
+        }
+      `}</style>
 
-      <Container size="lg">
-        <motion.div
-          variants={staggerContainer(0.12)}
-          initial="initial"
-          animate="animate"
-          className="max-w-4xl mx-auto text-center"
+      <div className="hero-card">
+
+      <motion.p
+        className="reveal"
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '11px',
+          letterSpacing: '.22em',
+          textTransform: 'uppercase',
+          color: 'var(--sage)',
+          marginBottom: '24px',
+        }}
+      >
+        Design Futurist
+      </motion.p>
+
+      <motion.h1
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(52px, 9vw, 100px)',
+          fontWeight: 400,
+          lineHeight: 1.0,
+          letterSpacing: '-.025em',
+          color: 'var(--ink)',
+          marginBottom: 0,
+        }}
+      >
+        I design for
+        <br />
+        <em style={{ fontStyle: 'italic', color: 'var(--sage)' }}>what&apos;s next.</em>
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          marginTop: '36px',
+          fontSize: '16px',
+          lineHeight: 1.7,
+          color: 'var(--ink-60)',
+          maxWidth: '440px',
+        }}
+      >
+        Working at the intersection of emerging technology, human behavior,
+        and visual systems — from game UX to generative tools to edtech.
+        I keep showing up where design is heading.
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          marginTop: '48px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '32px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            letterSpacing: '.15em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-60)',
+          }}
         >
-          {/* Title */}
-          <motion.div variants={staggerItemPolish(shouldReduceMotion)}>
-            <Text
-              variant="h1"
-              className="text-4xl md:text-5xl lg:text-6xl mb-6"
-              balance
+          Chicago, IL &nbsp;·&nbsp; Available for the right problem.
+        </span>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{ marginTop: '20px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+      >
+        {['Game UX', 'Generative Design', 'Creative Technology', 'Edtech', 'Product Strategy'].map(
+          (tag) => (
+            <span
+              key={tag}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9px',
+                letterSpacing: '.12em',
+                textTransform: 'uppercase',
+                color: 'var(--sage)',
+                padding: '4px 10px',
+                border: '1px solid var(--sage-light)',
+                background: 'var(--sage-faint)',
+              }}
             >
-              {title}
-            </Text>
-          </motion.div>
+              {tag}
+            </span>
+          )
+        )}
+      </motion.div>
 
-          {/* Subtitle */}
-          {subtitle && (
-            <motion.div variants={staggerItemPolish(shouldReduceMotion)}>
-              <Text
-                variant="lead"
-                color="secondary"
-                className="max-w-2xl mx-auto mb-8 md:mb-12"
-                pretty
-              >
-                {subtitle}
-              </Text>
-            </motion.div>
-          )}
+      <motion.div
+        initial={{ opacity: 0, y: 12, filter: 'blur(5px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{ marginTop: '56px' }}
+      >
+        <NextLink href="/work" className="cta-btn">
+          <span>View Work</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path
+              d="M1 7h12M8 3l4 4-4 4"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </NextLink>
+      </motion.div>
 
-          {/* CTAs */}
-          {(cta || secondaryCta) && (
-            <motion.div
-              variants={staggerItemPolish(shouldReduceMotion)}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              {cta && (
-                <MagneticButton strength={10}>
-                  <LinkButton href={cta.href} size="lg">
-                    {cta.label}
-                  </LinkButton>
-                </MagneticButton>
-              )}
-              {secondaryCta && (
-                <LinkButton
-                  href={secondaryCta.href}
-                  variant="secondary"
-                  size="lg"
-                >
-                  {secondaryCta.label}
-                </LinkButton>
-              )}
-            </motion.div>
-          )}
-        </motion.div>
-      </Container>
-
-      {/* Scroll indicator (optional) — refined spring, respects reduced motion */}
-      {variant === 'default' && !shouldReduceMotion && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, type: 'spring', stiffness: 120, damping: 24, bounce: 0 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: [0.4, 0, 0.2, 1],
-            }}
-            className="w-6 h-10 border-2 border-[rgb(var(--color-border-default))] rounded-full p-1"
-          >
-            <div className="w-1 h-2 bg-[rgb(var(--color-accent-primary))] rounded-full mx-auto" />
-          </motion.div>
-        </motion.div>
-      )}
+      </div>
     </section>
   )
 }
