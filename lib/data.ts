@@ -58,6 +58,19 @@ export const projects: Project[] = [
     href: '/work/curmunchkins',
   },
   {
+    slug: 'ink-bitcoin-ordinals-apparel',
+    title: 'INK Bitcoin Ordinals Community Apparel',
+    role: 'Community Designer',
+    year: 2024,
+    client: 'INKedBTC',
+    tags: ['Apparel Design', 'Community', 'Bitcoin Ordinals', 'Brand Extension', 'Merch'],
+    thumbnail: '/INK-ONBTC_Merch_V2.webp',
+    featured: true,
+    description:
+      'Apparel design for a Bitcoin-native NFT project — extending INKedBTC\'s ink-painting aesthetic off-chain with deliberate, craft-first merch.',
+    href: '/work/ink-bitcoin-ordinals-apparel',
+  },
+  {
     slug: 'spiced-realms-fructasia',
     title: 'The Spiced Realms of Fructasia',
     role: 'Design & World-Building',

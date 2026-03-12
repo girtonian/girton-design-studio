@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { usePathname } from 'next/navigation'
 import NextLink from 'next/link'
 import { cn } from '@/lib/utils'
@@ -27,7 +27,10 @@ export function Nav() {
   }, [mobileMenuOpen])
 
   return (
-    <header
+    <motion.header
+      initial={{ opacity: 0, y: -12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
       style={{
         position: 'fixed',
         top: 0,
@@ -134,8 +137,8 @@ export function Nav() {
             ))}
           </motion.div>
         )}
-      </AnimatePresence>
-    </header>
+        </AnimatePresence>
+    </motion.header>
   )
 }
 

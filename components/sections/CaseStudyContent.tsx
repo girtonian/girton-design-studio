@@ -209,6 +209,33 @@ function AnimatedSectionBlock({
         </motion.div>
       )}
 
+      {/* Section image gallery */}
+      {section.images && section.images.length > 0 && (
+        <motion.div
+          variants={scaleIn(shouldReduce)}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {section.images.map((src, i) => (
+            <motion.div
+              key={src}
+              variants={staggerItemPolish(shouldReduce)}
+              whileHover={shouldReduce ? {} : { scale: 1.02 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="rounded-xl overflow-hidden shadow-lg"
+            >
+              <Image
+                src={src}
+                alt={`${section.title ?? 'Case study'} image ${i + 1}`}
+                width={800}
+                height={600}
+                aspectRatio="auto"
+                className="w-full object-cover"
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+
       {/* Section header row: index number + title */}
       {section.title && (
         <div className="space-y-2">
