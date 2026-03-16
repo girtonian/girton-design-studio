@@ -42,9 +42,9 @@
   --color-border-default: 17 17 16;
   --color-border-emphasis: 17 17 16;
 
-  /* === TYPOGRAPHY === */
-  --font-sans:    'Georgia', 'Times New Roman', serif;
-  --font-display: 'Playfair Display', Georgia, serif;
+  /* === TYPOGRAPHY (Figma Website design) === */
+  --font-sans:    'Syne', system-ui, sans-serif;
+  --font-display: 'Handjet', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
   /* === SPACING === */
@@ -187,6 +187,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   cursor: none;
+}
+
+/* Body/paragraph text: Syne (Figma Font 3) */
+.font-body {
+  font-family: var(--font-sans);
 }
 
 a { color: inherit; }

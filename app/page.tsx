@@ -241,7 +241,7 @@ export default function HomePage() {
                   {thought.sub && (
                     <p
                       style={{
-                        fontFamily: 'Georgia, serif',
+                        fontFamily: 'var(--font-sans)',
                         fontSize: '13px',
                         color: 'var(--ink-60)',
                         lineHeight: 1.6,
@@ -278,12 +278,12 @@ export default function HomePage() {
               fontSize: 'clamp(36px, 6vw, 68px)',
               fontWeight: 400,
               lineHeight: 1.05,
-              letterSpacing: '-.02em',
+              letterSpacing: '-1.36px',
               marginBottom: '48px',
               color: 'var(--ink)',
             }}
           >
-            Let&apos;s build something <em style={{ fontStyle: 'italic', color: 'var(--sage)' }}>together.</em>
+            Let&apos;s build something <span style={{ color: 'var(--sage)' }}>together.</span>
           </h2>
 
           <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
@@ -372,10 +372,10 @@ function WorkCard({
       <h2
         style={{
           fontFamily: 'var(--font-display)',
-          fontSize: '28px',
-          fontWeight: 400,
+          fontSize: '36px',
+          fontWeight: 700,
           letterSpacing: '-.01em',
-          lineHeight: 1.2,
+          lineHeight: 1.05,
           marginBottom: '16px',
           position: 'relative',
           zIndex: 1,

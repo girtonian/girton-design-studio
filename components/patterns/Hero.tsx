@@ -4,8 +4,8 @@ import { motion } from 'motion/react'
 import NextLink from 'next/link'
 
 /**
- * Full-viewport hero — bottom-justified, Playfair Display headline,
- * italic sage accent, role tags, ink CTA with sage slide hover.
+ * Full-viewport hero — bottom-justified, Handjet headline,
+ * sage accent, role tags, ink CTA with sage slide hover.
  * Stagger via Motion container/item variants (Jakub-style enter).
  */
 
@@ -28,6 +28,14 @@ const itemVariants = {
     transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 }
+
+const HERO_TAGS = [
+  'INTERACTION DESIGN',
+  'Generative Design',
+  'Creative Technology',
+  'Visual Design',
+  'Product Strategy',
+]
 
 export function Hero() {
   return (
@@ -80,16 +88,16 @@ export function Hero() {
           style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(52px, 9vw, 100px)',
-            fontWeight: 400,
+            fontWeight: 500,
             lineHeight: 1.0,
-            letterSpacing: '-.025em',
+            letterSpacing: '-0.28px',
             color: 'var(--ink)',
             marginBottom: 0,
           }}
         >
           I design for
           <br />
-          <em style={{ fontStyle: 'italic', color: 'var(--sage)' }}>what&apos;s next.</em>
+          <span style={{ color: 'var(--sage)' }}>what&apos;s next.</span>
         </motion.h1>
 
         <motion.p
@@ -134,25 +142,24 @@ export function Hero() {
           variants={itemVariants}
           style={{ marginTop: '20px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}
         >
-          {['Game UX', 'Generative Design', 'Creative Technology', 'Edtech', 'Product Strategy'].map(
-            (tag) => (
-              <span
-                key={tag}
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '9px',
-                  letterSpacing: '.12em',
-                  textTransform: 'uppercase',
-                  color: 'var(--sage)',
-                  padding: '4px 10px',
-                  border: '1px solid var(--sage-light)',
-                  background: 'var(--sage-faint)',
-                }}
-              >
-                {tag}
-              </span>
-            )
-          )}
+          {HERO_TAGS.map((tag) => (
+            <span
+              key={tag}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9px',
+                letterSpacing: '1.08px',
+                textTransform: 'uppercase',
+                color: 'var(--sage)',
+                padding: '5px 11px',
+                border: '1px solid var(--sage-light)',
+                background: 'var(--sage-faint)',
+                lineHeight: 1.65,
+              }}
+            >
+              {tag}
+            </span>
+          ))}
         </motion.div>
 
         <motion.div
@@ -172,7 +179,6 @@ export function Hero() {
             </svg>
           </NextLink>
         </motion.div>
-
       </motion.div>
     </section>
   )
