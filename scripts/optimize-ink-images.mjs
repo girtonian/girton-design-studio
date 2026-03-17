@@ -12,14 +12,14 @@ import { dirname } from 'path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const publicDir = join(__dirname, '..', 'public')
 
-const INK_PREFIXES = ['INK-ONBTC', 'INK-ORD', 'INK-LEGACY']
+const INK_PREFIXES = ['INK-ONBTC', 'INK-ORD', 'INK-LEGACY', 'inked-hero', 'Inked-hero']
 
 async function getInkImages() {
   const files = await readdir(publicDir)
   const images = []
   for (const file of files) {
     const matches = INK_PREFIXES.some((p) => file.startsWith(p))
-    if (matches && /\.(png|jpg|jpeg|webp)$/i.test(file)) {
+    if (matches && /\.(png|jpg|jpeg)$/i.test(file)) {
       const fullPath = join(publicDir, file)
       const s = await stat(fullPath)
       if (s.isFile()) images.push(fullPath)
