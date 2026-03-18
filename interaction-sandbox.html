@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Girtonian — Interaction Sandbox</title>
+<style>
+/* ─────────────────────────────────────────────────────
+   RESET & TOKENS
+───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --black:    #050505;
+  --g950:     #0a0a0a;
+  --g900:     #111111;
+  --g800:     #1a1a1a;
+  --g700:     #252525;
+  --g500:     #555;
+  --g400:     #888;
+  --g200:     #ccc;
+  --white:    #f5f5f5;
+  --cyan:     #06b6d4;
+  --cyan-d:   #0e7490;
+  --purple:   #8b5cf6;
+  --amber:    #f59e0b;
+  --green:    #10b981;
+  --pink:     #ec4899;
+  --kyzen:    #1a3060;
+  --modz:     #0a0a2e;
+}
+html { font-size: 16px; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─────────────────────────────────────────────────────
+   GLOBAL CUSTOM CURSOR
+───────────────────────────────────────────────────── */
+#gcursor {
+  position: fixed; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--cyan); pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, opacity .2s, background .2s;
+  mix-blend-mode: difference;
+}
+#gcursor.big { width: 40px; height: 40px; opacity: .4; }
+#gcursor.hidden { opacity: 0; }
+
+/* ─────────────────────────────────────────────────────
+   FIXED HEADER + PILL NAV
+───────────────────────────────────────────────────── */
+#site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  border-bottom: 1px solid var(--g800);
+  background: rgba(5,5,5,.88);
+  backdrop-filter: blur(14px);
+  transition: background .4s, border-color .4s, color .4s;
+}
+#site-header.light-section {
+  background: rgba(245,245,245,.9);
+  border-color: rgba(0,0,0,.1);
+}
+#site-header.light-section .logo { color: #111; }
+#site-header.light-section .header-nav a { color: #555; }
+#site-header.light-section .header-nav a:hover { color: #111; }
+.logo {
+  font-size: .7rem; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--white); transition: color .3s;
+}
+.header-nav { display: flex; gap: 2rem; align-items: center; }
+.header-nav a {
+  font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--g400); text-decoration: none; transition: color .2s;
+}
+.header-nav a:hover { color: var(--white); }
+.demo-badge {
+  font-size: .6rem; padding: .2rem .6rem; border: 1px solid var(--cyan);
+  color: var(--cyan); border-radius: 99px; letter-spacing: .15em; text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────
+   SIDEBAR PILL NAV (right edge)
+───────────────────────────────────────────────────── */
+#pill-nav {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  z-index: 700; display: flex; flex-direction: column; gap: .5rem;
+  align-items: flex-end;
+}
+.pill-dot {
+  display: flex; align-items: center; gap: .5rem; cursor: pointer;
+}
+.pill-dot-circle {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--g700); border: 1px solid var(--g500);
+  transition: all .25s; flex-shrink: 0;
+}
+.pill-dot-label {
+  font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--g500); opacity: 0; transform: translateX(6px);
+  transition: opacity .2s, transform .2s; white-space: nowrap;
+  pointer-events: none;
+}
+.pill-dot:hover .pill-dot-label { opacity: 1; transform: translateX(0); }
+.pill-dot.active .pill-dot-circle { background: var(--cyan); border-color: var(--cyan); width: 8px; height: 8px; }
+.pill-dot.active .pill-dot-label { color: var(--cyan); opacity: 1; transform: translateX(0); }
+
+/* ─────────────────────────────────────────────────────
+   SHARED SECTION SHELL
+───────────────────────────────────────────────────── */
+.demo-section {
+  min-height: 100vh; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8rem 8vw 6rem;
+}
+.demo-label {
+  position: absolute; top: 6rem; left: 8vw;
+  font-size: .6rem; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--g500); display: flex; align-items: center; gap: .75rem;
+}
+.demo-label::before { content: ''; width: 1.5rem; height: 1px; background: var(--g700); }
+.demo-num {
+  position: absolute; bottom: 3rem; right: 8vw;
+  font-size: 6rem; font-weight: 200; color: var(--g800);
+  font-variant-numeric: tabular-nums; line-height: 1; user-select: none;
+}
+.demo-tech {
+  position: absolute; bottom: 3rem; left: 8vw;
+  font-size: .6rem; color: var(--g600); letter-spacing: .15em;
+  text-transform: uppercase; display: flex; gap: .75rem; flex-wrap: wrap;
+}
+.tech-pill {
+  padding: .15rem .55rem; border: 1px solid var(--g700);
+  border-radius: 99px; color: var(--g500);
+}
+
+/* ─────────────────────────────────────────────────────
+   01 — BLURRY TEXT REVEAL
+───────────────────────────────────────────────────── */
+#demo-blur { background: var(--black); }
+.blur-headline {
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-weight: 200; line-height: 1.1; letter-spacing: -.02em;
+  max-width: 900px;
+}
+.blur-word {
+  display: inline-block;
+  filter: blur(12px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: filter .6s ease, opacity .6s ease, transform .6s ease;
+  margin-right: .22em;
+}
+.blur-word.revealed {
+  filter: blur(0);
+  opacity: 1;
+  transform: translateY(0);
+}
+.blur-sub {
+  margin-top: 2rem;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--g400);
+  max-width: 620px;
+  line-height: 1.75;
+}
+.blur-sub-word {
+  display: inline-block;
+  filter: blur(6px); opacity: 0;
+  transition: filter .5s ease, opacity .5s ease;
+  margin-right: .22em;
+}
+.blur-sub-word.revealed { filter: blur(0); opacity: 1; }
+
+/* ─────────────────────────────────────────────────────
+   02 — CHARACTER SCRAMBLE
+───────────────────────────────────────────────────── */
+#demo-scramble { background: var(--g900); }
+.scramble-wrap { max-width: 900px; }
+.scramble-trigger {
+  font-size: clamp(3rem, 7vw, 7.5rem);
+  font-weight: 200; line-height: 1; letter-spacing: -.02em;
+  cursor: none;
+}
+.scramble-trigger em {
+  font-style: italic; font-family: Georgia, serif; color: var(--cyan);
+}
+.scramble-char { display: inline; transition: color .05s; }
+.scramble-char.scrambling { color: var(--cyan); opacity: .7; }
+
+.scramble-sub {
+  margin-top: 1.5rem; font-size: .85rem;
+  color: var(--g500); letter-spacing: .2em; text-transform: uppercase;
+}
+.scramble-hint {
+  margin-top: 1rem; font-size: .75rem;
+  color: var(--g500); display: flex; align-items: center; gap: .5rem;
+}
+.scramble-hint::before {
+  content: '→'; color: var(--cyan); font-size: .7rem;
+}
+/* Auto scramble on scroll-enter badge */
+.auto-badge {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .6rem; padding: .2rem .6rem;
+  background: rgba(6,182,212,.1); border: 1px solid var(--cyan-d);
+  color: var(--cyan); border-radius: 99px; letter-spacing: .1em;
+  margin-top: 1rem;
+}
+.auto-badge::before { content: '◉'; font-size: .55rem; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ─────────────────────────────────────────────────────
+   03 — SCROLL TEXT HIGHLIGHT
+───────────────────────────────────────────────────── */
+#demo-highlight { background: var(--black); }
+.highlight-body {
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 2; color: var(--g400);
+  max-width: 780px; font-weight: 300;
+}
+.hl {
+  display: inline; position: relative;
+  transition: color .4s ease, background-color .4s ease;
+  border-radius: 2px; padding: 0 .15em;
+}
+.hl::after {
+  content: '';
+  position: absolute; left: 0; right: 100%; bottom: -.05em;
+  height: 1px; background: var(--cyan);
+  transition: right .5s cubic-bezier(.16,1,.3,1);
+}
+.hl.lit { color: var(--white); }
+.hl.lit::after { right: 0; }
+
+/* Different colors per highlight type */
+.hl-cyan.lit  { color: var(--cyan); }
+.hl-amber.lit { color: var(--amber); }
+.hl-amber.lit::after { background: var(--amber); }
+.hl-green.lit { color: var(--green); }
+.hl-green.lit::after { background: var(--green); }
+.hl-purple.lit { color: var(--purple); }
+.hl-purple.lit::after { background: var(--purple); }
+
+/* ─────────────────────────────────────────────────────
+   04 — PUSH / REPULSION GRID
+───────────────────────────────────────────────────── */
+#demo-push { background: var(--g900); }
+.push-label-row {
+  margin-bottom: 2.5rem; display: flex;
+  justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;
+}
+.push-label-row h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 200;
+  letter-spacing: -.01em;
+}
+.push-label-row h2 em { font-style: italic; font-family: Georgia, serif; color: var(--cyan); }
+.push-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--g700);
+  border: 1px solid var(--g700);
+}
+.push-card {
+  background: var(--g900);
+  padding: 2.5rem 2rem;
+  transition: background .2s;
+  position: relative; overflow: hidden;
+  will-change: transform;
+  transform-origin: center center;
+  cursor: none;
+}
+.push-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(6,182,212,.07), transparent 70%);
+  opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.push-card:hover::before { opacity: 1; }
+
+.push-card-icon {
+  font-size: 2rem; margin-bottom: 1rem; display: block;
+}
+.push-card-title {
+  font-size: 1rem; font-weight: 300; margin-bottom: .5rem;
+  color: var(--white);
+}
+.push-card-desc {
+  font-size: .82rem; color: var(--g400); line-height: 1.6;
+}
+.push-card-year {
+  margin-top: 1.25rem; font-size: .65rem;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--g500);
+}
+.push-card-arrow {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  font-size: .85rem; color: var(--cyan); opacity: 0;
+  transition: opacity .2s, transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.push-card:hover .push-card-arrow { opacity: 1; transform: translate(3px,-3px); }
+
+/* ─────────────────────────────────────────────────────
+   05 — SCROLL VELOCITY TEXT STRETCH
+───────────────────────────────────────────────────── */
+#demo-stretch {
+  background: var(--black);
+  overflow: hidden;
+}
+.stretch-section-inner {
+  max-width: 100%;
+}
+.stretch-line {
+  display: block;
+  font-size: clamp(4rem, 10vw, 11rem);
+  font-weight: 200;
+  line-height: .95;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  will-change: transform;
+  transform-origin: left center;
+}
+.stretch-line em {
+  font-style: italic; font-family: Georgia, serif; color: var(--cyan);
+}
+.stretch-line:nth-child(even) {
+  color: var(--g400);
+  transform-origin: right center;
+}
+.stretch-speed {
+  margin-top: 3rem;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.stretch-meter {
+  width: 180px; height: 2px; background: var(--g800); border-radius: 99px; overflow: hidden;
+}
+.stretch-meter-fill {
+  height: 100%; width: 0%; background: var(--cyan);
+  transition: width .1s; border-radius: 99px;
+}
+.stretch-speed-label {
+  font-size: .65rem; color: var(--g500);
+  letter-spacing: .2em; text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────
+   06 — STATS ASSEMBLY (on-scroll formation)
+───────────────────────────────────────────────────── */
+#demo-stats { background: var(--g900); }
+.stats-header {
+  margin-bottom: 4rem;
+}
+.stats-header h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 200; letter-spacing: -.01em;
+}
+.stats-header h2 em { font-style: italic; font-family: Georgia, serif; color: var(--amber); }
+.stats-assembly {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--g700); border: 1px solid var(--g700);
+  position: relative;
+}
+.stat-block {
+  background: var(--g900); padding: 3rem 2.5rem;
+  opacity: 0;
+  transition: opacity .6s ease, transform .7s cubic-bezier(.16,1,.3,1);
+}
+.stat-block:nth-child(1) { transform: translate(-80px, -40px); }
+.stat-block:nth-child(2) { transform: translate(0, -80px); }
+.stat-block:nth-child(3) { transform: translate(0, 80px); }
+.stat-block:nth-child(4) { transform: translate(80px, -40px); }
+.stat-block.assembled { opacity: 1; transform: translate(0,0); }
+.stat-block:nth-child(2) { transition-delay: .08s; }
+.stat-block:nth-child(3) { transition-delay: .16s; }
+.stat-block:nth-child(4) { transition-delay: .24s; }
+
+.stat-num {
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: 200; line-height: 1; letter-spacing: -.02em;
+  color: var(--amber); margin-bottom: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: .8rem; color: var(--g400); line-height: 1.5;
+}
+.stat-project {
+  margin-top: .75rem; font-size: .6rem;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--g500);
+}
+/* Connecting line after assembly */
+.stats-assembly::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  border: 1px solid rgba(6,182,212,.08);
+  opacity: 0; transition: opacity .8s .4s;
+}
+.stats-assembly.assembled::after { opacity: 1; }
+
+/* ─────────────────────────────────────────────────────
+   07 — IMAGE STACK + HOVER FANS
+───────────────────────────────────────────────────── */
+#demo-stack { background: var(--black); }
+.stack-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6rem; align-items: center;
+}
+.stack-copy h2 {
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 200; letter-spacing: -.02em; line-height: 1.05;
+  margin-bottom: 1.5rem;
+}
+.stack-copy h2 em { font-style: italic; font-family: Georgia, serif; color: var(--purple); }
+.stack-copy p {
+  font-size: 1rem; color: var(--g400); line-height: 1.75; max-width: 420px;
+  margin-bottom: 2rem;
+}
+.stack-copy .cta {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--purple); border-bottom: 1px solid var(--purple);
+  padding-bottom: .2rem; text-decoration: none; transition: gap .2s;
+}
+.stack-copy .cta:hover { gap: .9rem; }
+
+/* Card stack container */
+.card-stack {
+  position: relative;
+  width: 340px; height: 420px;
+  cursor: none;
+}
+.stack-card {
+  position: absolute; inset: 0;
+  border-radius: 6px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 2rem;
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .4s ease;
+  will-change: transform;
+  overflow: hidden;
+}
+.stack-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 60%);
+  z-index: 1; pointer-events: none;
+}
+.stack-card-content { position: relative; z-index: 2; }
+.stack-card-label {
+  font-size: .6rem; letter-spacing: .25em;
+  text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: .3rem;
+}
+.stack-card-title { font-size: 1.1rem; font-weight: 300; color: #fff; }
+
+/* Default stacking positions */
+.stack-card:nth-child(1) {
+  transform: rotate(-6deg) translateX(-16px) translateY(8px);
+  z-index: 1;
+  background: linear-gradient(135deg, #0a0a2e, #1a0a3e);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.stack-card:nth-child(2) {
+  transform: rotate(3deg) translateX(8px) translateY(-4px);
+  z-index: 2;
+  background: linear-gradient(135deg, #1a2e1a, #0d2010);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.stack-card:nth-child(3) {
+  transform: rotate(0deg);
+  z-index: 3;
+  background: linear-gradient(135deg, #0a1628, #1a3060);
+  box-shadow: 0 16px 48px rgba(0,0,0,.6);
+}
+
+/* Fanned state on hover */
+.card-stack:hover .stack-card:nth-child(1) {
+  transform: rotate(-18deg) translateX(-120px) translateY(20px);
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+.card-stack:hover .stack-card:nth-child(2) {
+  transform: rotate(0deg) translateX(0) translateY(-8px);
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+.card-stack:hover .stack-card:nth-child(3) {
+  transform: rotate(16deg) translateX(100px) translateY(20px);
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+
+/* ─────────────────────────────────────────────────────
+   DIVIDERS
+───────────────────────────────────────────────────── */
+.section-rule {
+  height: 1px; background: var(--g800); margin: 0 8vw;
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .push-grid { grid-template-columns: 1fr 1fr; }
+  .stats-assembly { grid-template-columns: 1fr 1fr; }
+  .stack-layout { grid-template-columns: 1fr; }
+  .card-stack { margin: 0 auto; }
+  #pill-nav { display: none; }
+  .demo-section { padding: 7rem 6vw 5rem; }
+}
+@media (max-width: 600px) {
+  .push-grid { grid-template-columns: 1fr; }
+  .stats-assembly { grid-template-columns: 1fr 1fr; }
+  .stretch-line { font-size: clamp(2.5rem, 8vw, 5rem); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── GLOBAL CUSTOM CURSOR ── -->
+<div id="gcursor"></div>
+
+<!-- ── FIXED HEADER ── -->
+<header id="site-header">
+  <span class="logo">Girtonian — Interaction Sandbox</span>
+  <nav class="header-nav">
+    <a href="cursor-preview-demo.html">Cursor Preview</a>
+    <a href="girtonian-interaction-patterns-dataset.html">Dataset</a>
+    <a href="case-study-art-direction.html">Art Direction</a>
+    <span class="demo-badge">7 Live Demos</span>
+  </nav>
+</header>
+
+<!-- ── SIDEBAR NAV ── -->
+<nav id="pill-nav">
+  <div class="pill-dot active" data-target="demo-blur">
+    <span class="pill-dot-label">Blur Reveal</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-scramble">
+    <span class="pill-dot-label">Char Scramble</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-highlight">
+    <span class="pill-dot-label">Text Highlight</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-push">
+    <span class="pill-dot-label">Push Grid</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-stretch">
+    <span class="pill-dot-label">Velocity Stretch</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-stats">
+    <span class="pill-dot-label">Stats Assembly</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+  <div class="pill-dot" data-target="demo-stack">
+    <span class="pill-dot-label">Card Stack</span>
+    <span class="pill-dot-circle"></span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+  01 · BLURRY TEXT REVEAL
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-blur">
+  <span class="demo-label">01 — Blur Reveal on Scroll</span>
+
+  <h1 class="blur-headline" id="blur-h1">
+    I design systems<br>that think ahead<br>of the people<br>using them.
+  </h1>
+
+  <p class="blur-sub" id="blur-sub">
+    Fourteen years of turning ambiguous briefs into products that feel inevitable.
+    From enterprise design systems to game UIs to AI-native workflows —
+    the discipline is always the same: make complexity feel effortless.
+  </p>
+
+  <div class="demo-tech">
+    <span class="tech-pill">CSS blur()</span>
+    <span class="tech-pill">IntersectionObserver</span>
+    <span class="tech-pill">GSAP ScrollTrigger</span>
+  </div>
+  <span class="demo-num">01</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  02 · CHARACTER SCRAMBLE
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-scramble">
+  <span class="demo-label">02 — Character Scramble</span>
+  <div class="scramble-wrap">
+    <h2 class="scramble-trigger" id="scramble-h">
+      Design<br><em>Engineer</em>
+    </h2>
+    <p class="scramble-sub">Scrolls in · Hovers re-trigger · Resolves to truth</p>
+    <div class="scramble-hint">Hover the headline to re-run the scramble</div>
+    <div class="auto-badge">Auto-fires on scroll entry</div>
+  </div>
+  <div class="demo-tech">
+    <span class="tech-pill">Vanilla JS</span>
+    <span class="tech-pill">RAF loop</span>
+    <span class="tech-pill">Character cycling</span>
+  </div>
+  <span class="demo-num">02</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  03 · SCROLL TEXT HIGHLIGHT
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-highlight">
+  <span class="demo-label">03 — On-Scroll Text Highlight</span>
+
+  <p class="highlight-body" id="highlight-body">
+    Over the last <span class="hl hl-amber">fourteen years</span> I've shipped products across
+    gaming, enterprise, Web3, and physical-digital spaces.
+    At Impact Theory I designed an avatar system used by
+    <span class="hl hl-cyan">50,000 daily active users</span>.
+    At Fjord I led experience design for
+    <span class="hl hl-green">immersive installations</span>
+    seen by <span class="hl hl-green">20,000 attendees</span>.
+    At United Airlines I built a
+    <span class="hl hl-purple">design system with 60+ components</span>
+    used across their global product suite.
+    Today I direct
+    <span class="hl hl-cyan">multi-agent AI workflows</span>
+    that produce brand-quality outputs in a fraction of the time.
+    The through-line is simple: I help teams go from
+    <span class="hl hl-amber">ambiguous brief</span>
+    to <span class="hl hl-amber">shipped product</span>,
+    faster and with more craft than they thought possible.
+  </p>
+
+  <div class="demo-tech">
+    <span class="tech-pill">IntersectionObserver per word</span>
+    <span class="tech-pill">CSS underline animation</span>
+    <span class="tech-pill">Staggered thresholds</span>
+  </div>
+  <span class="demo-num">03</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  04 · PUSH / REPULSION GRID
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-push">
+  <span class="demo-label">04 — Push Repulsion Grid</span>
+
+  <div class="push-label-row">
+    <h2>Selected<br><em>Work</em></h2>
+    <p style="font-size:.82rem; color:var(--g400); max-width:300px; line-height:1.6;">
+      Hover any card. Adjacent cards push away. The whole grid becomes a living surface.
+    </p>
+  </div>
+
+  <div class="push-grid" id="push-grid">
+    <div class="push-card">
+      <span class="push-card-icon">⚡</span>
+      <div class="push-card-title">Project Kyzen</div>
+      <div class="push-card-desc">Avatar system for 50k daily active users. NFT economy, 3D customization, map builder.</div>
+      <div class="push-card-year">2022 · Impact Theory</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+    <div class="push-card">
+      <span class="push-card-icon">❄️</span>
+      <div class="push-card-title">Merry Modz</div>
+      <div class="push-card-desc">Full holiday game brand: 6 characters, landing page, matching card game, Dark Forest runner.</div>
+      <div class="push-card-year">2023 · IP Design</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+    <div class="push-card">
+      <span class="push-card-icon">🍓</span>
+      <div class="push-card-title">CurMunchkins</div>
+      <div class="push-card-desc">Sensory-first iOS app for neurodiverse kids. ADHD, autism, dyslexia design systems.</div>
+      <div class="push-card-year">2023 · iOS</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+    <div class="push-card">
+      <span class="push-card-icon">✈️</span>
+      <div class="push-card-title">United Airlines DS</div>
+      <div class="push-card-desc">Enterprise design system — 60+ components, token architecture, global governance model.</div>
+      <div class="push-card-year">2021 · Accenture Interactive</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+    <div class="push-card">
+      <span class="push-card-icon">🌊</span>
+      <div class="push-card-title">Fjord Installations</div>
+      <div class="push-card-desc">Projection-mapped spatial experiences. 20,000 attendees. Physical-digital in the real world.</div>
+      <div class="push-card-year">2020 · Fjord / Accenture</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+    <div class="push-card">
+      <span class="push-card-icon">🗺️</span>
+      <div class="push-card-title">MakeShop Wayfinding</div>
+      <div class="push-card-desc">Spatial navigation system for Accenture's innovation facility. Research → signage → experience.</div>
+      <div class="push-card-year">2019 · Accenture</div>
+      <span class="push-card-arrow">↗</span>
+    </div>
+  </div>
+
+  <div class="demo-tech">
+    <span class="tech-pill">GSAP</span>
+    <span class="tech-pill">Magnetic repulsion math</span>
+    <span class="tech-pill">RAF pointer tracking</span>
+  </div>
+  <span class="demo-num">04</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  05 · VELOCITY TEXT STRETCH
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-stretch">
+  <span class="demo-label">05 — Scroll Velocity Text Stretch</span>
+
+  <div class="stretch-section-inner">
+    <span class="stretch-line" id="sl1">Design</span>
+    <span class="stretch-line" id="sl2"><em>Engineer</em></span>
+    <span class="stretch-line" id="sl3">Creative</span>
+    <span class="stretch-line" id="sl4"><em>Director</em></span>
+    <span class="stretch-line" id="sl5">Systems</span>
+    <span class="stretch-line" id="sl6"><em>Thinker</em></span>
+  </div>
+
+  <div class="stretch-speed">
+    <div class="stretch-speed-label">Scroll velocity</div>
+    <div class="stretch-meter"><div class="stretch-meter-fill" id="vel-meter"></div></div>
+    <div id="vel-readout" style="font-size:.65rem; color:var(--g500); font-variant-numeric: tabular-nums; min-width:3rem;">0 px/s</div>
+  </div>
+
+  <div class="demo-tech">
+    <span class="tech-pill">Velocity sampling</span>
+    <span class="tech-pill">scaleX on odd/even rows</span>
+    <span class="tech-pill">Spring decay</span>
+  </div>
+  <span class="demo-num">05</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  06 · STATS ASSEMBLY
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-stats">
+  <span class="demo-label">06 — On-Scroll Layout Formation</span>
+
+  <div class="stats-header">
+    <h2>The numbers behind<br>the <em>narrative</em></h2>
+  </div>
+
+  <div class="stats-assembly" id="stats-assembly">
+    <div class="stat-block">
+      <div class="stat-num" data-target="50">0</div>
+      <div class="stat-label">Thousand daily active users on Kyzen's avatar platform</div>
+      <div class="stat-project">Project Kyzen · Impact Theory</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" data-target="20">0</div>
+      <div class="stat-label">Thousand people experienced the Fjord installations live</div>
+      <div class="stat-project">Fjord · Accenture Interactive</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" data-target="60">0</div>
+      <div class="stat-label">Components in the United Airlines enterprise design system</div>
+      <div class="stat-project">United Airlines · Accenture</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" data-target="14">0</div>
+      <div class="stat-label">Years shipping products across gaming, enterprise, and AI</div>
+      <div class="stat-project">Girtonian LLC · Full career</div>
+    </div>
+  </div>
+
+  <div class="demo-tech">
+    <span class="tech-pill">CSS transform offsets</span>
+    <span class="tech-pill">IntersectionObserver</span>
+    <span class="tech-pill">Counter animation</span>
+  </div>
+  <span class="demo-num">06</span>
+</section>
+
+<div class="section-rule"></div>
+
+<!-- ══════════════════════════════════════════════════
+  07 · IMAGE STACK FAN
+══════════════════════════════════════════════════ -->
+<section class="demo-section" id="demo-stack">
+  <span class="demo-label">07 — Card Stack Fan on Hover</span>
+
+  <div class="stack-layout">
+    <div class="stack-copy">
+      <h2>Three projects.<br>One<br><em>designer.</em></h2>
+      <p>
+        Hover the card stack to fan them apart. Each card is a different project — different world,
+        same hand. At rest they read as one cohesive body of work; separated, each stands on its own.
+      </p>
+      <a href="cursor-preview-demo.html" class="cta">See all projects →</a>
+    </div>
+
+    <div class="card-stack" id="card-stack">
+      <!-- Card 1: Merry Modz (aurora night) -->
+      <div class="stack-card">
+        <div class="stack-card-content">
+          <div class="stack-card-label">Game Brand · 2023</div>
+          <div class="stack-card-title">Merry Modz</div>
+        </div>
+      </div>
+      <!-- Card 2: Map Editor (forest green) -->
+      <div class="stack-card">
+        <div class="stack-card-content">
+          <div class="stack-card-label">Creator Tool · 2022</div>
+          <div class="stack-card-title">Kyzen Map Editor</div>
+        </div>
+      </div>
+      <!-- Card 3: GIRTONIAN dashboard (crystalline blue) — top -->
+      <div class="stack-card">
+        <div class="stack-card-content">
+          <div class="stack-card-label">Game UI · 2022</div>
+          <div class="stack-card-title">Project Kyzen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-tech">
+    <span class="tech-pill">CSS 3D transforms</span>
+    <span class="tech-pill">GSAP stagger</span>
+    <span class="tech-pill">Hover state machine</span>
+  </div>
+  <span class="demo-num">07</span>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+  FOOTER
+══════════════════════════════════════════════════ -->
+<div style="padding: 4rem 8vw; border-top: 1px solid var(--g800); background: var(--g950); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+  <span style="font-size:.75rem; color:var(--g500);">Girtonian LLC — Interaction Sandbox · All patterns built with vanilla JS + CSS</span>
+  <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+    <a href="cursor-preview-demo.html" style="font-size:.75rem; color:var(--cyan); text-decoration:none;">Cursor Preview Demo →</a>
+    <a href="girtonian-interaction-patterns-dataset.html" style="font-size:.75rem; color:var(--cyan); text-decoration:none;">Full Dataset →</a>
+    <a href="case-study-art-direction.html" style="font-size:.75rem; color:var(--cyan); text-decoration:none;">Art Direction Guide →</a>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── CURSOR ── */
+const cur = document.getElementById('gcursor');
+let cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove', e => { tx=e.clientX; ty=e.clientY; });
+document.querySelectorAll('a,button,.push-card,.card-stack,.scramble-trigger').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+(function cursorLoop(){
+  cx += (tx-cx)*0.55; cy += (ty-cy)*0.55;
+  cur.style.left = cx+'px'; cur.style.top = cy+'px';
+  requestAnimationFrame(cursorLoop);
+})();
+
+/* ── CONTEXT-AWARE HEADER ── */
+const header = document.getElementById('site-header');
+const lightSections = []; // add section IDs here for light bg
+const io_header = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting && lightSections.includes(e.target.id))
+      header.classList.add('light-section');
+    else if(e.isIntersecting)
+      header.classList.remove('light-section');
+  });
+}, {threshold:0.5, rootMargin:'-56px 0px 0px 0px'});
+document.querySelectorAll('.demo-section').forEach(s => io_header.observe(s));
+
+/* ── SIDEBAR NAV ACTIVE STATE ── */
+const pillDots = document.querySelectorAll('.pill-dot');
+const demoSections = document.querySelectorAll('.demo-section');
+const io_nav = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      pillDots.forEach(d=>d.classList.remove('active'));
+      const match = document.querySelector(`.pill-dot[data-target="${e.target.id}"]`);
+      if(match) match.classList.add('active');
+    }
+  });
+}, {threshold:0.4});
+demoSections.forEach(s=>io_nav.observe(s));
+pillDots.forEach(d => d.addEventListener('click', ()=>{
+  document.getElementById(d.dataset.target)?.scrollIntoView({behavior:'smooth'});
+}));
+
+/* ══════════════════════════════════════════════
+   01 · BLUR REVEAL
+══════════════════════════════════════════════ */
+function wrapWords(el, cls){
+  const html = el.innerHTML;
+  const words = html.split(/(\s+|<br\s*\/?>)/gi);
+  el.innerHTML = words.map(w => {
+    if(/^\s+$/.test(w)||/^<br/i.test(w)) return w;
+    if(w.trim()) return `<span class="${cls}">${w}</span>`;
+    return w;
+  }).join('');
+}
+wrapWords(document.getElementById('blur-h1'), 'blur-word');
+wrapWords(document.getElementById('blur-sub'), 'blur-sub-word');
+
+const blurWords = document.querySelectorAll('.blur-word, .blur-sub-word');
+const io_blur = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('revealed');
+  });
+}, {threshold:0, rootMargin:'0px 0px -80px 0px'});
+
+// Stagger reveal using delays
+blurWords.forEach((w, i) => {
+  w.style.transitionDelay = (i * 0.035) + 's';
+  io_blur.observe(w);
+});
+
+/* ══════════════════════════════════════════════
+   02 · CHARACTER SCRAMBLE
+══════════════════════════════════════════════ */
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
+function scramble(el, finalText, duration, onDone){
+  const chars = finalText.split('');
+  let frame = 0;
+  const totalFrames = duration / 16.67;
+  const interval = setInterval(() => {
+    frame++;
+    const progress = frame / totalFrames;
+    let result = '';
+    chars.forEach((ch, i) => {
+      if(ch === ' ' || ch === '\n'){ result += ch; return; }
+      if(progress > i / chars.length){
+        result += `<span class="scramble-char">${ch}</span>`;
+      } else {
+        const rand = CHARS[Math.floor(Math.random()*CHARS.length)];
+        result += `<span class="scramble-char scrambling">${rand}</span>`;
+      }
+    });
+    el.innerHTML = result;
+    if(frame >= totalFrames){
+      clearInterval(interval);
+      el.innerHTML = finalText;
+      if(onDone) onDone();
+    }
+  }, 16.67);
+}
+
+const scrambleEl = document.getElementById('scramble-h');
+const originalScramble = scrambleEl.innerHTML;
+let scrambleRunning = false;
+
+function runScramble(){
+  if(scrambleRunning) return;
+  scrambleRunning = true;
+  const plainText = scrambleEl.textContent;
+  scramble(scrambleEl, plainText, 1200, () => {
+    // restore em tags
+    scrambleEl.innerHTML = originalScramble;
+    setTimeout(() => { scrambleRunning = false; }, 800);
+  });
+}
+
+scrambleEl.addEventListener('mouseenter', runScramble);
+
+// Auto-run on scroll entry
+const io_scramble = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) runScramble(); });
+}, {threshold:0.5});
+io_scramble.observe(document.getElementById('demo-scramble'));
+
+/* ══════════════════════════════════════════════
+   03 · TEXT HIGHLIGHT
+══════════════════════════════════════════════ */
+const hlSpans = document.querySelectorAll('.hl');
+const io_hl = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('lit');
+  });
+}, {threshold:1, rootMargin:'0px 0px -40px 0px'});
+hlSpans.forEach((s,i) => {
+  s.style.transitionDelay = (i * 0.15) + 's';
+  io_hl.observe(s);
+});
+
+/* ══════════════════════════════════════════════
+   04 · PUSH GRID (magnetic repulsion)
+══════════════════════════════════════════════ */
+const grid = document.getElementById('push-grid');
+const cards = Array.from(grid.querySelectorAll('.push-card'));
+const PUSH_RADIUS = 220;   // px — affect range
+const PUSH_STRENGTH = 28;  // max displacement in px
+
+let gridMX = 0, gridMY = 0;
+let pushRaf;
+
+function pushLoop(){
+  const gridRect = grid.getBoundingClientRect();
+  const mx = gridMX - gridRect.left;
+  const my = gridMY - gridRect.top;
+
+  cards.forEach(card => {
+    const r = card.getBoundingClientRect();
+    const cx = (r.left + r.width/2) - gridRect.left;
+    const cy = (r.top  + r.height/2) - gridRect.top;
+    const dx = cx - mx;
+    const dy = cy - my;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+
+    if(dist < PUSH_RADIUS && dist > 0){
+      const force = (1 - dist/PUSH_RADIUS);
+      const tx = (dx/dist) * force * PUSH_STRENGTH;
+      const ty = (dy/dist) * force * PUSH_STRENGTH;
+      card.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px)`;
+    } else {
+      card.style.transform = '';
+    }
+  });
+  pushRaf = requestAnimationFrame(pushLoop);
+}
+
+grid.addEventListener('mouseenter', () => pushRaf = requestAnimationFrame(pushLoop));
+grid.addEventListener('mouseleave', () => {
+  cancelAnimationFrame(pushRaf);
+  cards.forEach(c => c.style.transform = '');
+});
+grid.addEventListener('mousemove', e => {
+  gridMX = e.clientX; gridMY = e.clientY;
+  // radial glow follows cursor per card
+  cards.forEach(card => {
+    const r = card.getBoundingClientRect();
+    const lx = ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%';
+    const ly = ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%';
+    card.style.setProperty('--mx', lx);
+    card.style.setProperty('--my', ly);
+  });
+});
+
+/* ══════════════════════════════════════════════
+   05 · SCROLL VELOCITY STRETCH
+══════════════════════════════════════════════ */
+const stretchLines = [
+  document.getElementById('sl1'),
+  document.getElementById('sl2'),
+  document.getElementById('sl3'),
+  document.getElementById('sl4'),
+  document.getElementById('sl5'),
+  document.getElementById('sl6'),
+];
+const velMeter = document.getElementById('vel-meter');
+const velReadout = document.getElementById('vel-readout');
+
+let lastScroll = window.scrollY;
+let lastTime = performance.now();
+let velocity = 0;
+let velDecay = 0;
+
+window.addEventListener('scroll', () => {
+  const now = performance.now();
+  const dt = now - lastTime;
+  if(dt > 0){
+    velocity = (window.scrollY - lastScroll) / dt * 16; // px per frame approx
+  }
+  lastScroll = window.scrollY;
+  lastTime = now;
+}, {passive:true});
+
+(function stretchLoop(){
+  velDecay += (velocity - velDecay) * 0.08;
+  velocity *= 0.85;
+
+  const abs = Math.abs(velDecay);
+  const sign = velDecay >= 0 ? 1 : -1;
+  const scaleAmount = Math.min(abs * 0.008, 0.35); // max +35% stretch
+
+  stretchLines.forEach((line, i) => {
+    // odd lines stretch one way, even lines the other
+    const dir = i % 2 === 0 ? 1 : -1;
+    const stretch = 1 + scaleAmount * dir * sign;
+    line.style.transform = `scaleX(${stretch.toFixed(4)})`;
+  });
+
+  // velocity meter
+  const pct = Math.min(abs * 0.6, 100);
+  velMeter.style.width = pct + '%';
+  velReadout.textContent = Math.round(abs) + ' px/f';
+
+  requestAnimationFrame(stretchLoop);
+})();
+
+/* ══════════════════════════════════════════════
+   06 · STATS ASSEMBLY
+══════════════════════════════════════════════ */
+const statsAssembly = document.getElementById('stats-assembly');
+const statBlocks = statsAssembly.querySelectorAll('.stat-block');
+
+function animateCount(el, target, duration){
+  let start = 0;
+  const step = (ts) => {
+    if(!start) start = ts;
+    const prog = Math.min((ts-start)/duration, 1);
+    const eased = 1 - Math.pow(1-prog, 3); // ease-out-cubic
+    el.textContent = Math.round(eased * target);
+    if(prog < 1) requestAnimationFrame(step);
+    else el.textContent = target + (target >= 50 ? 'k' : target === 14 ? '+' : '+');
+  };
+  requestAnimationFrame(step);
+}
+
+const io_stats = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      statsAssembly.classList.add('assembled');
+      statBlocks.forEach(b => b.classList.add('assembled'));
+      // animate counters
+      statBlocks.forEach(b => {
+        const numEl = b.querySelector('.stat-num');
+        const target = parseInt(numEl.dataset.target);
+        setTimeout(() => animateCount(numEl, target, 1200), 300);
+      });
+      io_stats.unobserve(e.target);
+    }
+  });
+}, {threshold:0.3});
+io_stats.observe(statsAssembly);
+
+/* ══════════════════════════════════════════════
+   07 · CARD STACK — tilt on mousemove
+══════════════════════════════════════════════ */
+const stack = document.getElementById('card-stack');
+const stackCards = stack.querySelectorAll('.stack-card');
+
+stack.addEventListener('mousemove', e => {
+  const r = stack.getBoundingClientRect();
+  const nx = (e.clientX - r.left - r.width/2) / (r.width/2);
+  const ny = (e.clientY - r.top - r.height/2) / (r.height/2);
+
+  // Top card tilts slightly with cursor
+  const topCard = stackCards[stackCards.length-1];
+  topCard.style.transition = 'transform .2s ease';
+  // When hovered, fan + tilt
+  if(stack.matches(':hover')){
+    // slight additional tilt on top card based on cursor
+  }
+});
+
+stack.addEventListener('mouseleave', () => {
+  stackCards.forEach(c => c.style.transition = '');
+});
+
+})();
+</script>
+</body>
+</html>

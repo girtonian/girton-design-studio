@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Girtonian — Interaction Patterns Dataset 2026</title>
+<style>
+  :root {
+    --black: #050505;
+    --gray-950: #0a0a0a;
+    --gray-900: #111111;
+    --gray-800: #1a1a1a;
+    --gray-700: #2a2a2a;
+    --gray-500: #555555;
+    --gray-400: #888888;
+    --gray-200: #cccccc;
+    --white: #f5f5f5;
+    --cyan: #06b6d4;
+    --cyan-dim: #0e7490;
+    --purple: #8b5cf6;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* PROGRESS BAR */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    z-index: 1000; transition: width 0.1s;
+    width: 0%;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed; top: 0; width: 100%; z-index: 99;
+    padding: 1.5rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--gray-800);
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 1.1rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--white); }
+  .header-meta { font-size: 0.75rem; color: var(--gray-500); letter-spacing: 0.15em; text-transform: uppercase; }
+
+  /* SIDE NAV */
+  #side-nav {
+    position: fixed; right: 2rem; top: 50%; transform: translateY(-50%);
+    z-index: 90; display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .nav-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gray-700); cursor: pointer;
+    transition: all 0.3s; border: 1px solid var(--gray-600);
+  }
+  .nav-dot:hover, .nav-dot.active { background: var(--cyan); border-color: var(--cyan); }
+  .nav-dot[title]:hover::after {
+    content: attr(title);
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    background: var(--gray-800); color: var(--white);
+    padding: 0.25rem 0.75rem; border-radius: 4px;
+    font-size: 0.7rem; white-space: nowrap; pointer-events: none;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 40%, rgba(6,182,212,0.06), transparent),
+      radial-gradient(ellipse 40% 60% at 80% 60%, rgba(139,92,246,0.05), transparent);
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; text-align: center; position: relative; }
+  .eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 2rem;
+    display: inline-flex; align-items: center; gap: 0.75rem;
+  }
+  .eyebrow::before, .eyebrow::after { content: ''; width: 2rem; height: 1px; background: var(--cyan-dim); }
+  h1.display {
+    font-size: clamp(3rem, 8vw, 7rem); font-weight: 200;
+    line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 2rem;
+  }
+  h1.display em { font-style: italic; font-weight: 200; font-family: Georgia, serif; color: var(--cyan); }
+  .hero-desc {
+    font-size: clamp(1rem, 2vw, 1.3rem); color: var(--gray-400);
+    max-width: 700px; margin: 0 auto 3rem;
+  }
+  .stats-row {
+    display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+    border-top: 1px solid var(--gray-800); padding-top: 2.5rem; margin-top: 2.5rem;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2.5rem; font-weight: 200; color: var(--cyan); display: block; }
+  .stat-label { font-size: 0.75rem; color: var(--gray-500); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* MAIN LAYOUT */
+  main { padding-top: 5rem; }
+
+  /* SECTION BASE */
+  section { padding: 5rem 3rem; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+
+  /* SECTION HEADER */
+  .section-header { margin-bottom: 3.5rem; }
+  .section-num {
+    font-size: 0.7rem; letter-spacing: 0.4em; color: var(--gray-600);
+    text-transform: uppercase; margin-bottom: 0.75rem; display: block;
+  }
+  h2.section-title {
+    font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 200;
+    letter-spacing: -0.01em; line-height: 1.1;
+  }
+  h2.section-title em { font-style: italic; font-family: Georgia, serif; color: var(--cyan); }
+  .section-desc { font-size: 1.1rem; color: var(--gray-400); max-width: 700px; margin-top: 1rem; }
+
+  /* CARDS GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5px;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-800);
+  }
+  .card {
+    background: var(--gray-950);
+    padding: 2rem;
+    transition: background 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 0; background: var(--cyan);
+    transition: height 0.3s;
+  }
+  .card:hover { background: var(--gray-900); }
+  .card:hover::before { height: 100%; }
+  .card-tag {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.2em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem;
+    border: 1px solid var(--gray-700); color: var(--gray-500);
+    border-radius: 2px; margin-bottom: 1rem;
+  }
+  .card-tag.scroll { border-color: var(--cyan-dim); color: var(--cyan); }
+  .card-tag.threed { border-color: var(--purple); color: var(--purple); }
+  .card-tag.text { border-color: var(--amber); color: var(--amber); }
+  .card-tag.hover { border-color: var(--green); color: var(--green); }
+  .card-tag.page { border-color: #ec4899; color: #ec4899; }
+  .card-tag.cursor { border-color: #f97316; color: #f97316; }
+  .card-tag.webgl { border-color: #a78bfa; color: #a78bfa; }
+  .card-tag.system { border-color: var(--gray-400); color: var(--gray-300); }
+  .card h3 { font-size: 1.2rem; font-weight: 300; margin-bottom: 0.75rem; line-height: 1.3; }
+  .card p { font-size: 0.9rem; color: var(--gray-400); line-height: 1.65; margin-bottom: 1rem; }
+  .card-meta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    font-size: 0.7rem; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.1em;
+    border-top: 1px solid var(--gray-800); padding-top: 1rem; margin-top: auto;
+  }
+  .card-meta span { display: flex; align-items: center; gap: 0.3rem; }
+  .pill {
+    display: inline-block; font-size: 0.65rem; padding: 0.15rem 0.5rem;
+    background: var(--gray-800); border-radius: 99px; color: var(--gray-400);
+    margin-right: 0.3rem; margin-top: 0.3rem;
+  }
+  .pill.highlight { background: rgba(6,182,212,0.1); color: var(--cyan); }
+
+  /* DIVIDER */
+  .divider {
+    border: none; border-top: 1px solid var(--gray-800);
+    margin: 0 3rem;
+  }
+
+  /* MARKETING SECTION */
+  .marketing-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5px; background: var(--gray-800); border: 1px solid var(--gray-800);
+  }
+  .strategy-card {
+    background: var(--gray-950); padding: 2.5rem;
+    transition: background 0.25s;
+  }
+  .strategy-card:hover { background: var(--gray-900); }
+  .strategy-num {
+    font-size: 4rem; font-weight: 200; color: var(--gray-800);
+    line-height: 1; margin-bottom: 1.25rem; font-family: Georgia, serif;
+  }
+  .strategy-card h3 { font-size: 1.4rem; font-weight: 300; margin-bottom: 0.75rem; }
+  .strategy-card p { font-size: 0.9rem; color: var(--gray-400); line-height: 1.7; }
+  .strategy-card ul { list-style: none; margin-top: 1rem; }
+  .strategy-card li {
+    font-size: 0.85rem; color: var(--gray-400);
+    padding: 0.4rem 0; border-bottom: 1px solid var(--gray-800);
+    display: flex; align-items: flex-start; gap: 0.5rem;
+  }
+  .strategy-card li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  /* UPGRADE TABLE */
+  .upgrade-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .upgrade-table th {
+    text-align: left; padding: 1rem 1.5rem; font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500);
+    border-bottom: 1px solid var(--gray-800); font-weight: 400;
+  }
+  .upgrade-table td {
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-800);
+    vertical-align: top; line-height: 1.5;
+  }
+  .upgrade-table tr:hover td { background: var(--gray-900); }
+  .current-badge { color: var(--gray-500); font-size: 0.8rem; }
+  .upgrade-badge { color: var(--cyan); font-size: 0.85rem; }
+  .impact-badge {
+    display: inline-block; padding: 0.2rem 0.5rem;
+    font-size: 0.65rem; border-radius: 2px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .impact-high { background: rgba(6,182,212,0.15); color: var(--cyan); }
+  .impact-med { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .impact-stretch { background: rgba(139,92,246,0.15); color: var(--purple); }
+
+  /* VOICE SECTION */
+  .voice-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .voice-card {
+    background: var(--gray-900); border: 1px solid var(--gray-800);
+    padding: 2rem; border-radius: 2px;
+  }
+  .voice-platform {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--gray-500); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .voice-platform::before { content: ''; width: 1.5rem; height: 1px; background: var(--gray-700); }
+  .voice-card h3 { font-size: 1.1rem; font-weight: 300; margin-bottom: 0.75rem; color: var(--cyan); }
+  .voice-card p { font-size: 0.85rem; color: var(--gray-400); line-height: 1.6; }
+  .voice-hook { font-size: 1rem; color: var(--white); font-style: italic; margin-bottom: 0.75rem; line-height: 1.5; }
+
+  /* SOURCE FOOTER */
+  .sources-footer {
+    padding: 4rem 3rem; border-top: 1px solid var(--gray-800);
+    background: var(--gray-950);
+  }
+  .sources-footer h2 { font-size: 1rem; font-weight: 300; color: var(--gray-500); margin-bottom: 1.5rem; letter-spacing: 0.2em; text-transform: uppercase; }
+  .sources-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .sources-list a {
+    font-size: 0.8rem; color: var(--gray-600); text-decoration: none;
+    transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .sources-list a::before { content: '↗'; font-size: 0.7rem; }
+  .sources-list a:hover { color: var(--cyan); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+  }
+  .filter-btn {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 0.4rem 1rem; border: 1px solid var(--gray-700);
+    background: transparent; color: var(--gray-500); cursor: pointer;
+    transition: all 0.2s; border-radius: 2px;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--cyan); color: var(--cyan);
+    background: rgba(6,182,212,0.05);
+  }
+
+  /* CALLOUT BOX */
+  .callout {
+    border-left: 3px solid var(--cyan);
+    padding: 1.5rem 2rem; margin: 2.5rem 0;
+    background: rgba(6,182,212,0.04);
+  }
+  .callout-label {
+    font-size: 0.65rem; color: var(--cyan); text-transform: uppercase;
+    letter-spacing: 0.3em; margin-bottom: 0.75rem; display: block;
+  }
+  .callout p { font-size: 0.95rem; color: var(--gray-300); line-height: 1.7; }
+  .callout strong { color: var(--white); font-weight: 400; }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; border-left: 1px solid var(--gray-800); margin-left: 1rem; }
+  .timeline-item { padding: 0 0 2rem 2rem; position: relative; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -5px; top: 0.35rem;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gray-800); border: 1px solid var(--gray-600);
+  }
+  .timeline-item.active::before { background: var(--cyan); border-color: var(--cyan); }
+  .timeline-date { font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .timeline-item h4 { font-size: 1.1rem; font-weight: 300; margin-bottom: 0.4rem; }
+  .timeline-item p { font-size: 0.85rem; color: var(--gray-400); }
+
+  /* SCROLL FADE IN */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header { padding: 1rem 1.5rem; }
+    section { padding: 3.5rem 1.5rem; }
+    .divider { margin: 0 1.5rem; }
+    #side-nav { display: none; }
+    h1.display { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="logo">Girtonian — Interaction Patterns</div>
+  <div class="header-meta">Dataset v1.0 &nbsp;·&nbsp; March 2026</div>
+</header>
+
+<nav id="side-nav">
+  <div class="nav-dot active" title="Hero" data-target="hero"></div>
+  <div class="nav-dot" title="Codrops Patterns" data-target="patterns"></div>
+  <div class="nav-dot" title="Storytelling Systems" data-target="storytelling"></div>
+  <div class="nav-dot" title="Portfolio Upgrade Map" data-target="upgrades"></div>
+  <div class="nav-dot" title="Marketing as Design Engineer" data-target="marketing"></div>
+  <div class="nav-dot" title="Content Voice" data-target="voice"></div>
+  <div class="nav-dot" title="Sources" data-target="sources"></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="eyebrow">Girtonian LLC · Design Intelligence Brief</div>
+    <h1 class="display">
+      Interaction Patterns<br>
+      for a <em>Design Engineer</em><br>
+      who tells stories
+    </h1>
+    <p class="hero-desc">
+      A living dataset of the most compelling front-end interaction patterns from
+      Codrops, Smashing Magazine, and the creative dev community — mapped directly
+      to your portfolio goals and the agentic AI design era.
+    </p>
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-num">38+</span>
+        <span class="stat-label">Interaction patterns catalogued</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">7</span>
+        <span class="stat-label">Pattern categories</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">2026</span>
+        <span class="stat-label">Research window</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">14+</span>
+        <span class="stat-label">Portfolio upgrade opportunities</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PATTERNS SECTION -->
+<section id="patterns">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <span class="section-num">01 / Interaction Patterns</span>
+      <h2 class="section-title">What Codrops Is<br><em>Building Right Now</em></h2>
+      <p class="section-desc">
+        38 patterns sourced from Codrops' Playground and Tutorials (2024–2026),
+        organized by type. Each one is a potential upgrade to your portfolio's emotional register.
+      </p>
+    </div>
+
+    <div class="filter-bar fade-in">
+      <button class="filter-btn active" data-filter="all">All Patterns</button>
+      <button class="filter-btn" data-filter="scroll">Scroll</button>
+      <button class="filter-btn" data-filter="threed">3D / WebGL</button>
+      <button class="filter-btn" data-filter="text">Typography</button>
+      <button class="filter-btn" data-filter="hover">Hover</button>
+      <button class="filter-btn" data-filter="page">Page Transitions</button>
+      <button class="filter-btn" data-filter="cursor">Cursor</button>
+      <button class="filter-btn" data-filter="system">Systems</button>
+    </div>
+
+    <div class="card-grid fade-in" id="pattern-grid">
+
+      <!-- SCROLL PATTERNS -->
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>On-Scroll 3D Carousel</h3>
+        <p>Rotate a full 3D carousel while scrolling — the Y-axis spin is driven entirely by scroll velocity, giving users a satisfying sense of dimensional control.</p>
+        <div>
+          <span class="pill">GSAP ScrollTrigger</span>
+          <span class="pill">Three.js</span>
+          <span class="pill highlight">★ High Story Impact</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>May 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Consecutive Scroll Animations (One Element)</h3>
+        <p>A single element animates across multiple waypoints — hero, sticky pin, exit — using GSAP Flip to smoothly reposition without layout thrash. Perfect for narrative-driven sections.</p>
+        <div>
+          <span class="pill">GSAP Flip</span>
+          <span class="pill">ScrollTrigger</span>
+          <span class="pill highlight">★ Portfolio-Ready</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Nov 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>On-Scroll Layout Formations</h3>
+        <p>Content is pinned until the full grid layout assembles itself into place, then unpins when complete. Creates a feeling of a scene "loading in" to greet the reader.</p>
+        <div>
+          <span class="pill">GSAP Pin</span>
+          <span class="pill">Grid</span>
+          <span class="pill highlight">★ Work Section Upgrade</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Sep 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Scroll-Based SVG Filter Animations on Text</h3>
+        <p>SVG feTurbulence and feDisplacementMap applied to HTML text, distorting glyphs as you scroll. The visual "instability" can represent transformative thinking perfectly.</p>
+        <div>
+          <span class="pill">SVG Filters</span>
+          <span class="pill">ScrollTrigger</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Aug 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Scroll-Revealed WebGL Gallery</h3>
+        <p>As you scroll, masked WebGL panels reveal fullscreen imagery using SVG masks that expand in grid or venetian-blind patterns. Each case study becomes a cinematic reveal.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">Three.js</span>
+          <span class="pill">Astro</span>
+          <span class="pill">Barba.js</span>
+          <span class="pill highlight">★ Case Study Use</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Scroll-Reactive 3D Gallery with Mood Backgrounds</h3>
+        <p>Images stacked along the Z-axis. Scrolling pushes the camera through the depth. Each image carries its own color palette; the background interpolates between them. Pure mood storytelling.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">Velocity sampling</span>
+          <span class="pill">GLSL shaders</span>
+          <span class="pill highlight">★ High Story Impact</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Mar 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Blurry Text Reveal on Scroll</h3>
+        <p>Text begins fully blurred at rest, sharpening into legibility as the user scrolls into the section. The "emergence" metaphor pairs perfectly with AI-transformation narratives.</p>
+        <div>
+          <span class="pill">CSS blur()</span>
+          <span class="pill">ScrollTrigger</span>
+          <span class="pill highlight">★ Philosophy Section</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Apr 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>On-Scroll Text Highlight Animations</h3>
+        <p>Key phrases in body copy light up in sequence as the reader progresses, like an AI annotating your own story. Each highlight is a micro-interaction that rewards attention.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">IntersectionObserver</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Apr 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Structured Scroll-Driven Image Grid</h3>
+        <p>A sticky grid layout where images reveal progressively within a contained region as you scroll. Each row of work becomes a deliberate, controlled disclosure.</p>
+        <div>
+          <span class="pill">CSS Sticky</span>
+          <span class="pill">GSAP</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Mar 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="scroll">
+        <span class="card-tag scroll">Scroll</span>
+        <h3>Staggered 3D Grid Animations</h3>
+        <p>Grid cells animate in 3D space during scroll — rotating, tilting, scaling — staggered across the grid for organic rhythm. Makes a portfolio grid feel alive, not static.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">3D CSS transforms</span>
+          <span class="pill highlight">★ Work Grid Upgrade</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Oct 2024</span>
+        </div>
+      </div>
+
+      <!-- 3D / WEBGL -->
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>WebGPU Scanning Effect with Depth Maps</h3>
+        <p>A laser-scan effect using WebGPU and custom shaders, revealing depth information beneath the surface. Conceptually rich: the idea of AI "seeing" beneath a surface to find hidden patterns.</p>
+        <div>
+          <span class="pill">WebGPU</span>
+          <span class="pill">Depth Maps</span>
+          <span class="pill">Custom Shaders</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Mar 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Infinite Scrolling 3D Carousel (React Three Fiber)</h3>
+        <p>An endlessly looping carousel with wavy distortion driven by scroll velocity. The organic sine-wave warp makes it feel physical, not mechanical.</p>
+        <div>
+          <span class="pill">React Three Fiber</span>
+          <span class="pill">GSAP</span>
+          <span class="pill">Distortion shader</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Nov 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Video Voxelization with Physics</h3>
+        <p>Video pixels are voxelized into 3D cubes and dropped into a Rapier physics world. Gravity-responsive, chaotic, and deeply memorable. Ideal for a hero moment.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">Rapier physics</span>
+          <span class="pill">Shaders</span>
+          <span class="pill highlight">★ Hero Candidate</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Jan 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Model Texture Transition + Procedural Noise</h3>
+        <p>A 3D model transitions between two textures using procedural radial noise as the mask. The dissolution effect feels like digital metamorphosis — perfect for brand transformation stories.</p>
+        <div>
+          <span class="pill">WebGL</span>
+          <span class="pill">React Three Fiber</span>
+          <span class="pill">Noise shaders</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>May 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>WebGL Portal System (DOM-Tracked)</h3>
+        <p>A WebGL scene rendered to a texture and masked to match a DOM element's position — so 3D and HTML co-exist seamlessly. DOM scroll, WebGL depth. The canvas becomes a portal inside your page.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">Render targets</span>
+          <span class="pill">Hash routing</span>
+          <span class="pill highlight">★ Breakthrough Pattern</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Feature</span>
+          <span>Nov 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Horizontal Parallax Gallery (DOM → WebGL)</h3>
+        <p>Start with a CSS parallax gallery, then upgrade the same scene to GPU-powered WebGL with shaders. The dual-implementation approach teaches optimization thinking.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">GLSL</span>
+          <span class="pill">Progressive enhancement</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Interactive Video Projection Mapping</h3>
+        <p>Map video onto 3D geometry with real-time distortion, UV manipulation, and interactive controls. Directly relevant to your Fjord projection-mapping work — a case study demo in the browser.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">Video textures</span>
+          <span class="pill">UV shaders</span>
+          <span class="pill highlight">★ Fjord Case Study</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Aug 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="threed">
+        <span class="card-tag threed">3D / WebGL</span>
+        <h3>Composite WebGL Rendering (Render Targets)</h3>
+        <p>Multiple scenes composited in WebGL using render targets — one scene feeding into another as a texture. Enables seamless scene transitions and deep visual layering.</p>
+        <div>
+          <span class="pill">Three.js</span>
+          <span class="pill">Render targets</span>
+          <span class="pill">Post-processing</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>2025</span>
+        </div>
+      </div>
+
+      <!-- TYPOGRAPHY -->
+      <div class="card" data-category="text">
+        <span class="card-tag text">Typography</span>
+        <h3>Terminal-Like Character Hover Animations</h3>
+        <p>Characters in a headline scramble through a character set before resolving to their final glyph — a "decoding" effect that reads as AI-generated, computational, and confident.</p>
+        <div>
+          <span class="pill">Vanilla JS</span>
+          <span class="pill">Character cycling</span>
+          <span class="pill highlight">★ AI Brand Fit</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Jun 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="text">
+        <span class="card-tag text">Typography</span>
+        <h3>Velocity-Responsive Text Stretch</h3>
+        <p>Headings stretch horizontally using sine-wave distortion relative to scroll velocity — at rest they snap clean, while fast scrolling makes them feel elastic and physical.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">Velocity sampling</span>
+          <span class="pill">CSS transforms</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Feature</span>
+          <span>Nov 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="text">
+        <span class="card-tag text">Typography</span>
+        <h3>SVG Morphing Into Letters</h3>
+        <p>Shapes morph into letter forms using GSAP MorphSVG — rectangles that transform into the word "DESIGN" or a case study title. The reveal makes the reading of text feel earned.</p>
+        <div>
+          <span class="pill">GSAP MorphSVG</span>
+          <span class="pill">Canvas rendering</span>
+          <span class="pill highlight">★ Case Study Opener</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Feature</span>
+          <span>Nov 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="text">
+        <span class="card-tag text">Typography</span>
+        <h3>Animating in Frames: Repeating Image Transition</h3>
+        <p>Images animate along a path in rapid sequence — like film frames — creating a flipbook-within-the-page effect. Great for showing before/after or design iteration sequences.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">Frame sequencing</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Apr 2025</span>
+        </div>
+      </div>
+
+      <!-- HOVER -->
+      <div class="card" data-category="hover">
+        <span class="card-tag hover">Hover</span>
+        <h3>Push Animation on Grid Items</h3>
+        <p>Hovering on one grid cell "pushes" adjacent cells away from the cursor — the whole grid becomes physically responsive. Makes a static work grid feel like a living surface.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">Magnetic repulsion math</span>
+          <span class="pill highlight">★ Work Grid Upgrade</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Jun 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="hover">
+        <span class="card-tag hover">Hover</span>
+        <h3>Context-Aware Animations for Fixed Elements</h3>
+        <p>A fixed element (logo, CTA button) has awareness of the sections scrolling behind it — it changes color, reveals text, or hides based on what it's floating over.</p>
+        <div>
+          <span class="pill">IntersectionObserver</span>
+          <span class="pill">GSAP</span>
+          <span class="pill">mix-blend-mode</span>
+          <span class="pill highlight">★ Nav Upgrade</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Oct 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="hover">
+        <span class="card-tag hover">Hover</span>
+        <h3>Hover Motion Intro + Grid Animation</h3>
+        <p>Entry animation plays on load, then transitions seamlessly into a hover-responsive state. The intro "hands off" to the interactive state, creating continuity between passive and active experience.</p>
+        <div>
+          <span class="pill">GSAP timeline</span>
+          <span class="pill">CSS Grid</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>May 2024</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="hover">
+        <span class="card-tag hover">Hover</span>
+        <h3>Image Stack Entrance Animations</h3>
+        <p>A stack of images fanned out like cards, with different hover states — flip, scatter, cascade — that invite interaction. Great for project thumbnails where you want to tease multiple outputs.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">Stagger</span>
+          <span class="pill">Z-index orchestration</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Apr 2024</span>
+        </div>
+      </div>
+
+      <!-- PAGE TRANSITIONS -->
+      <div class="card" data-category="page">
+        <span class="card-tag page">Page Transitions</span>
+        <h3>Lightweight SPA Router with Async Crossfade</h3>
+        <p>Vanilla JS router with true async page transitions — no framework, no bloat. New content fades over old with a crossfade that uses GSAP timelines for choreographed timing.</p>
+        <div>
+          <span class="pill">Vanilla JS</span>
+          <span class="pill">GSAP</span>
+          <span class="pill">Vite</span>
+          <span class="pill highlight">★ Portfolio Architecture</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="page">
+        <span class="card-tag page">Page Transitions</span>
+        <h3>Animating Responsive Grid Layout Transitions (GSAP Flip)</h3>
+        <p>Grid layouts morph between breakpoint states using GSAP Flip — so resizing the browser becomes part of the choreography, not a jarring layout shift.</p>
+        <div>
+          <span class="pill">GSAP Flip</span>
+          <span class="pill">CSS Grid</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Jan 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="page">
+        <span class="card-tag page">Page Transitions</span>
+        <h3>Narrative Portal Transformation</h3>
+        <p>A bounded WebGL window tracks a DOM element's position as you navigate between pages. On the contact page, it transforms into text — a narrative "arrival." No other page does this.</p>
+        <div>
+          <span class="pill">Three.js render textures</span>
+          <span class="pill">Hash routing</span>
+          <span class="pill">DOM coordinate tracking</span>
+          <span class="pill highlight">★ Signature Experience</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Feature</span>
+          <span>Nov 2025</span>
+        </div>
+      </div>
+
+      <!-- CURSOR -->
+      <div class="card" data-category="cursor">
+        <span class="card-tag cursor">Cursor</span>
+        <h3>GPU-Accelerated Cursor Trail</h3>
+        <p>Instead of spawning 100 DOM nodes for a cursor trail, encode trail data into a noise texture. The shader reads brightness = icon ID and renders the whole trail on GPU. Zero DOM spam, infinite scale.</p>
+        <div>
+          <span class="pill">Custom shader</span>
+          <span class="pill">Noise texture</span>
+          <span class="pill highlight">★ Penev Technique</span>
+        </div>
+        <div class="card-meta">
+          <span>Vladyslav Penev</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="cursor">
+        <span class="card-tag cursor">Cursor</span>
+        <h3>Cursor-as-Preview-Window (StringCursor)</h3>
+        <p>The cursor itself becomes a preview thumbnail that shows the destination before you click. A few HTML attributes define the states; the behavior is fully declarative.</p>
+        <div>
+          <span class="pill">Custom Web Component</span>
+          <span class="pill">CSS-driven states</span>
+          <span class="pill highlight">★ Work Section</span>
+        </div>
+        <div class="card-meta">
+          <span>Vladyslav Penev</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="cursor">
+        <span class="card-tag cursor">Cursor</span>
+        <h3>Multi-Input Blended Cursor Parallax</h3>
+        <p>Cursor parallax, scroll, and scripted poses are blended additively — no competing signals, no jitter. The result feels like a single, breathing entity responding to everything at once.</p>
+        <div>
+          <span class="pill">Additive blending</span>
+          <span class="pill">Spring physics</span>
+          <span class="pill highlight">★ Penev Technique</span>
+        </div>
+        <div class="card-meta">
+          <span>Vladyslav Penev</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <!-- SYSTEMS -->
+      <div class="card" data-category="system">
+        <span class="card-tag system">Systems</span>
+        <h3>Infinite Canvas (Pan-Anywhere Image Space)</h3>
+        <p>An image gallery that extends in all directions — X, Y, and Z — with seamless tiling. Users pan freely in 2D space. For a portfolio this says: "there is more to explore than you can see."</p>
+        <div>
+          <span class="pill">WebGL</span>
+          <span class="pill">Pointer events</span>
+          <span class="pill">Infinite tiling</span>
+          <span class="pill highlight">★ Work Gallery</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Tutorial</span>
+          <span>Jan 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="system">
+        <span class="card-tag system">Systems</span>
+        <h3>CSS-First Interaction Architecture</h3>
+        <p>All effects declared through CSS custom properties and variables. Hover states, transitions, and dynamic filters animate through the same declarative surface as traditional styling — zero JS for state management.</p>
+        <div>
+          <span class="pill">CSS variables</span>
+          <span class="pill">@property</span>
+          <span class="pill">GPU layer</span>
+          <span class="pill highlight">★ Penev Technique</span>
+        </div>
+        <div class="card-meta">
+          <span>Vladyslav Penev</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="system">
+        <span class="card-tag system">Systems</span>
+        <h3>State-Over-Animation Mindset</h3>
+        <p>Heavy visual changes are treated as predictable state transitions, not hand-scripted simulations. Reduces complexity and makes behaviors composable — the "design system" approach applied to motion.</p>
+        <div>
+          <span class="pill">GSAP</span>
+          <span class="pill">State machines</span>
+          <span class="pill">Reusable modules</span>
+        </div>
+        <div class="card-meta">
+          <span>Vladyslav Penev</span>
+          <span>Feb 2026</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="system">
+        <span class="card-tag system">Systems</span>
+        <h3>Rive-Driven Animation System</h3>
+        <p>Rive replaces static Lottie with state-machine-powered animations that respond to user input in real time. A Rive animation for your hero — an AI brain, a design process loop — beats any video or GIF.</p>
+        <div>
+          <span class="pill">Rive</span>
+          <span class="pill">State machines</span>
+          <span class="pill">WASM renderer</span>
+          <span class="pill highlight">★ Hero Upgrade</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Year Review</span>
+          <span>Dec 2025</span>
+        </div>
+      </div>
+
+      <div class="card" data-category="system">
+        <span class="card-tag system">Systems</span>
+        <h3>Origami: Free Animated 3D Objects (React Three Fiber)</h3>
+        <p>12 open-source 3D objects that fold and unfold, built with R3F and GSAP. Drop-in components for any React project — your Girtonian site can feature an origami figure that "unfolds" as the page loads.</p>
+        <div>
+          <span class="pill">React Three Fiber</span>
+          <span class="pill">GSAP</span>
+          <span class="pill">Free / Open-source</span>
+        </div>
+        <div class="card-meta">
+          <span>Codrops Playground</span>
+          <span>Jul 2024</span>
+        </div>
+      </div>
+
+    </div><!-- /card-grid -->
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- STORYTELLING SECTION -->
+<section id="storytelling">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <span class="section-num">02 / Storytelling Systems</span>
+      <h2 class="section-title">How the Best Portfolios<br><em>Tell Stories</em></h2>
+      <p class="section-desc">
+        The portfolios getting noticed in 2026 are not resumes with nice typography.
+        They're authored experiences with narrative logic, emotional arcs, and designed closure.
+      </p>
+    </div>
+
+    <div class="callout fade-in">
+      <span class="callout-label">Key Insight from Research</span>
+      <p>Roman Jean-Elie's WebGL portfolio (Codrops Nov 2025) uses a portal that opens at page load and transforms into the word <strong>"MEET ME"</strong> on the contact page. His about section is divided into <strong>Cinema, Theater, and Code</strong> — not "Experience" and "Skills." That's the difference. <strong>Narrative architecture beats layout architecture every time.</strong></p>
+    </div>
+
+    <div class="timeline fade-in">
+      <div class="timeline-item active">
+        <div class="timeline-date">Opening Act — First 3 seconds</div>
+        <h4>The Hook: Something happens before you scroll</h4>
+        <p>Video voxelization, origami unfold, or a particle field that assembles from noise into your name. The visitor must feel something before they read anything.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Rising Action — Scroll begins</div>
+        <h4>The World: Each section is a room, not a row</h4>
+        <p>On-scroll 3D layout formations, blurry text revealing as you descend, scroll-pinned elements that wait for you. The page reveals itself — you don't just scroll past it.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Climax — Work section</div>
+        <h4>The Proof: Case studies that demonstrate, not describe</h4>
+        <p>Cursor-as-preview-window, scroll-reactive mood galleries, inline video projection mapping demos. Show the Fjord installations in a WebGL recreation, not a screenshot.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Resolution — Contact</div>
+        <h4>The Invitation: Narrative closure, not a form</h4>
+        <p>A portal that transforms into text, a morphing shape that becomes "Let's build something." The ending is designed, not defaulted.</p>
+      </div>
+    </div>
+
+    <div class="callout fade-in" style="border-color: var(--purple); background: rgba(139,92,246,0.04);">
+      <span class="callout-label" style="color: var(--purple);">Girtonian Opportunity</span>
+      <p>Your background in <strong>projection mapping, immersive installations (Fjord/Accenture)</strong>, gaming (Impact Theory), and design systems makes you the rare designer who can actually <strong>build</strong> these experiences — not just design them. That's your story. The website should be that proof-in-motion.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PORTFOLIO UPGRADE MAP -->
+<section id="upgrades">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <span class="section-num">03 / Portfolio Upgrade Map</span>
+      <h2 class="section-title">Where Your Site Is Now<br><em>vs. Where It Could Go</em></h2>
+      <p class="section-desc">
+        Your current portfolio has the right skeleton. Here's the specific upgrade path
+        mapped to Codrops patterns — ordered by narrative impact, not technical complexity.
+      </p>
+    </div>
+
+    <table class="upgrade-table fade-in">
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th>Current State</th>
+          <th>Codrops Pattern Upgrade</th>
+          <th>Tech</th>
+          <th>Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hero</strong></td>
+          <td class="current-badge">Mouse radial-gradient glow. Static title. Scroll-down implied.</td>
+          <td class="upgrade-badge">Video Voxelization OR Origami 3D fold-in. Your name assembles from particles or folds into frame. Scroll triggers the disassembly.</td>
+          <td><span class="pill">Three.js + Rapier</span><span class="pill">R3F</span></td>
+          <td><span class="impact-badge impact-high">Highest</span></td>
+        </tr>
+        <tr>
+          <td><strong>Navigation</strong></td>
+          <td class="current-badge">Full-screen black overlay, large numbered links.</td>
+          <td class="upgrade-badge">Context-aware nav dot: changes color/blend-mode based on section it floats over. Stays minimal, gains intelligence.</td>
+          <td><span class="pill">IntersectionObserver</span><span class="pill">mix-blend-difference</span></td>
+          <td><span class="impact-badge impact-high">High</span></td>
+        </tr>
+        <tr>
+          <td><strong>Philosophy copy</strong></td>
+          <td class="current-badge">Static paragraphs. Large number headers.</td>
+          <td class="upgrade-badge">Blurry text reveal (sharpens on scroll). Key phrases highlight as you read. Terminal scramble on section headline reveal.</td>
+          <td><span class="pill">GSAP ScrollTrigger</span><span class="pill">CSS blur()</span></td>
+          <td><span class="impact-badge impact-high">High</span></td>
+        </tr>
+        <tr>
+          <td><strong>Work list</strong></td>
+          <td class="current-badge">Border-top list items. Arrow icons. Text-only hover (color change).</td>
+          <td class="upgrade-badge">Cursor-as-preview-window: hovering a project title reveals a thumbnail in the cursor. Push-repulsion on the list items when cursor approaches.</td>
+          <td><span class="pill">StringCursor</span><span class="pill">Magnetic math</span></td>
+          <td><span class="impact-badge impact-high">High</span></td>
+        </tr>
+        <tr>
+          <td><strong>Case Studies</strong></td>
+          <td class="current-badge">Impact stats only. No visual demos.</td>
+          <td class="upgrade-badge">Scroll-Revealed WebGL Gallery per case study. Kyzen: avatar customization shown with interactive 3D model. Fjord: inline video projection mapping demo.</td>
+          <td><span class="pill">Three.js</span><span class="pill">SVG masks</span><span class="pill">GSAP</span></td>
+          <td><span class="impact-badge impact-high">Highest</span></td>
+        </tr>
+        <tr>
+          <td><strong>Stats counters</strong></td>
+          <td class="current-badge">Static numbers (50%, 40%, etc.) in cyan.</td>
+          <td class="upgrade-badge">On-scroll layout formation: numbers "assemble" from off-screen when section enters. Each stat slides in from a different direction, assembling the proof.</td>
+          <td><span class="pill">GSAP Flip</span><span class="pill">ScrollTrigger</span></td>
+          <td><span class="impact-badge impact-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td><strong>Services grid</strong></td>
+          <td class="current-badge">2x2 grid, hover text color change only.</td>
+          <td class="upgrade-badge">Staggered 3D grid: each card has subtle Z-tilt on hover. Grid as a whole breathes on scroll entry. Hover pushes adjacent cards.</td>
+          <td><span class="pill">GSAP</span><span class="pill">CSS 3D transforms</span></td>
+          <td><span class="impact-badge impact-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td><strong>Contact</strong></td>
+          <td class="current-badge">Email link, phone number, LinkedIn. Clean but passive.</td>
+          <td class="upgrade-badge">Narrative portal closure: the cursor trail or a geometric shape morphs into text "CONNECT" or "LET'S BUILD" — the page ends with intention, not information.</td>
+          <td><span class="pill">GSAP MorphSVG</span><span class="pill">Three.js</span></td>
+          <td><span class="impact-badge impact-stretch">Stretch Goal</span></td>
+        </tr>
+        <tr>
+          <td><strong>Page Routing</strong></td>
+          <td class="current-badge">Single-page, scroll-to sections. No page transitions.</td>
+          <td class="upgrade-badge">Lightweight SPA router with GSAP crossfade. Case studies become separate routes. WebGL portal tracks between sections as you navigate.</td>
+          <td><span class="pill">Vanilla JS router</span><span class="pill">Barba.js</span></td>
+          <td><span class="impact-badge impact-stretch">Stretch Goal</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- MARKETING SECTION -->
+<section id="marketing">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <span class="section-num">04 / Marketing as a Design Engineer</span>
+      <h2 class="section-title">What Gets You <em>Noticed</em><br>in the Agentic AI Era</h2>
+      <p class="section-desc">
+        Based on research across Codrops, Lovart, Supernova, CIO, The New Stack,
+        and the design community in 2026. The window for differentiation is open — but narrowing.
+      </p>
+    </div>
+
+    <div class="callout fade-in">
+      <span class="callout-label">The 2026 Hiring Reality</span>
+      <p>Over <strong>93% of engineering leaders</strong> expect AI to transform productivity. Only <strong>3%</strong> report transformational impact. The gap is filled by people who can redesign workflows, not just use tools. <strong>That is Jonathan Girton's exact brief. Own it explicitly.</strong></p>
+    </div>
+
+    <div class="marketing-grid fade-in">
+
+      <div class="strategy-card">
+        <div class="strategy-num">01</div>
+        <h3>Reframe: Creative Director of AI Agents</h3>
+        <p>Stop describing yourself as a "Senior Product Designer using AI." Own the title: <em>Design Engineer who orchestrates multi-agent creative workflows.</em> In 2026, the threat isn't AI replacing designers — it's designers who manage 50 AI agents replacing those who don't.</p>
+        <ul>
+          <li>Your Prompt Shop on Contra is proof you're already selling agent orchestration, not just design deliverables</li>
+          <li>Reframe every case study: "I directed AI agents to produce X while maintaining brand DNA"</li>
+          <li>Make your Make.com + Claude workflows visible on the site — they're the product</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-num">02</div>
+        <h3>Build One Signature Demonstration</h3>
+        <p>The most-hired creative developers have one thing: a single, unforgettable demo that circulates the community. Bilal Elmossaoui's scroll-driven 3D narrative. Sébastien Lempens' Paris scooter ride. What's yours?</p>
+        <ul>
+          <li>Candidate A: A WebGL voxelization of your own face/avatar, tied to your Kyzen NFT work</li>
+          <li>Candidate B: A Fjord installation recreation — projection mapping in the browser</li>
+          <li>Candidate C: An agentic design demo — type a brief, watch Claude generate a design system in real time on-screen</li>
+          <li>Post on Codrops Creative Hub — they have 1,000+ demos and actively feature community work</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-num">03</div>
+        <h3>Make Your Design System Machine-Readable</h3>
+        <p>In 2026, design systems that can't be read by AI agents are becoming obsolete. Your United Airlines work is a proof point — document it as an MCP-compatible, AI-queryable system to demonstrate you understand where design systems are going.</p>
+        <ul>
+          <li>Convert your UA Design System walkthrough into a structured JSON/MCP schema</li>
+          <li>Write a short article: "What I'd build differently about the UA design system for the agentic era"</li>
+          <li>Add an "AI-readable design system" service offering to your Girtonian services page</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-num">04</div>
+        <h3>Storytelling as Proof, Not Decoration</h3>
+        <p>Your biggest competitive advantage is that you've built experiences for 20,000 attendees (Fjord), 50,000 users (Kyzen), and global enterprise teams. Quantified storytelling — not features, but emotional outcomes with numbers attached — is what separates your portfolio from the market.</p>
+        <ul>
+          <li>Rewrite every project summary: "28% DAU increase" → "28% more people returned the next day"</li>
+          <li>Lead with the human problem, end with the system you built to solve it</li>
+          <li>Use scroll-highlighted copy to call out the impact numbers as the reader passes over them</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-num">05</div>
+        <h3>Contribute to Codrops / Creative Hub</h3>
+        <p>Codrops published 200+ articles in 2025 and is actively building community. The Creative Hub has 1,000+ demos. A single accepted demo puts your work in front of the exact community that hires or recommends creative technologists.</p>
+        <ul>
+          <li>Build one of the upgrade patterns above, then submit it as a Codrops tutorial</li>
+          <li>Your TCSEBO framework (from Prompt Shop strategy) would make an excellent interactive web demo/article</li>
+          <li>Document your AI design workflow as a tutorial — "Building a Design System with Claude as Copilot"</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-num">06</div>
+        <h3>Differentiate: The Immersive Installation Angle</h3>
+        <p>Almost no web portfolio designers can say they've built projection-mapped installations viewed by 20,000 people. This is a superpower in an era where physical-digital hybrid experiences are coming back via AR/MR. Lean into it hard.</p>
+        <ul>
+          <li>Build an interactive video projection mapping demo using Three.js (Codrops Aug 2025 tutorial)</li>
+          <li>Frame Fjord work under "Spatial Design" not just "Installations" — it sounds futuristic, because it was</li>
+          <li>Connect it to the agentic AI theme: "AI-directed spatial experiences" is a defensible niche</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- CONTENT VOICE SECTION -->
+<section id="voice">
+  <div class="section-inner">
+    <div class="section-header fade-in">
+      <span class="section-num">05 / Content Voice + Platform Strategy</span>
+      <h2 class="section-title">Hot Takes for<br><em>Building Credibility</em></h2>
+      <p class="section-desc">
+        Three platform angles tailored to Jonathan's unique POV: 14 years of design,
+        immersive installation experience, AI-native workflows, and creative technologist identity.
+      </p>
+    </div>
+
+    <div class="voice-grid fade-in">
+
+      <div class="voice-card">
+        <div class="voice-platform">LinkedIn · Thought Leadership</div>
+        <h3>The Creative Director Reframe</h3>
+        <p class="voice-hook">"I used to work on a team of 8 designers. Now I direct a team of 50 AI agents. Same creative standards. 50% faster. The job title is Design Engineer — the actual job is creative director of autonomous systems."</p>
+        <p>Closes with: your Prompt Shop, TCSEBO framework, and a CTA to connect. This positions you as ahead of the curve, not threatened by it.</p>
+      </div>
+
+      <div class="voice-card">
+        <div class="voice-platform">LinkedIn · Case Study Thread</div>
+        <h3>The Fjord Story</h3>
+        <p class="voice-hook">"In 2020, I projection-mapped a 30-foot wall for 20,000 people. In 2026, I can build the same immersive experience in a browser. Here's the tech stack — and what it means for physical-digital design."</p>
+        <p>Closes with a demo link to a Three.js recreation of the installation. Proves your 2020 work is still your leading edge.</p>
+      </div>
+
+      <div class="voice-card">
+        <div class="voice-platform">X / Twitter · Hot Take Thread</div>
+        <h3>The "Design Systems Are Dead" Contrarian</h3>
+        <p class="voice-hook">"Design systems built for Figma are already legacy. If your tokens can't be consumed by an AI agent, your system is a museum exhibit. The next design system is an MCP server."</p>
+        <p>Deeply controversial in the design community. Engages Figma teams, design systems practitioners, and AI tooling builders simultaneously.</p>
+      </div>
+
+      <div class="voice-card">
+        <div class="voice-platform">Codrops / Dev.to · Tutorial</div>
+        <h3>Build an AI-Directed UI Demo</h3>
+        <p class="voice-hook">"I gave Claude a design brief and a GSAP canvas. Here's what it built — and here's what I had to fix. A practical look at AI-directed creative development in 2026."</p>
+        <p>Targets both the creative dev audience (Codrops) and the AI tooling audience. Positions you as the bridge between both worlds.</p>
+      </div>
+
+      <div class="voice-card">
+        <div class="voice-platform">Contra / Portfolio</div>
+        <h3>The Kyzen Case Study Reframe</h3>
+        <p class="voice-hook">"50,000 people used the avatar system I designed. Only 3 people know that the design system underneath it was built with an AI co-pilot. This is what that looked like."</p>
+        <p>Rewrites Kyzen as a case study of AI-augmented product design in a high-stakes environment (blockchain, NFTs, daily active users). </p>
+      </div>
+
+      <div class="voice-card">
+        <div class="voice-platform">Girtonian Blog · Long Form</div>
+        <h3>The TCSEBO Framework Published</h3>
+        <p class="voice-hook">"I spent 2 years developing a prompt engineering framework for design workflows. Here it is — and here's the interactive demo that shows it working in real time."</p>
+        <p>Turns your Prompt Shop strategy doc into a public, link-worthy resource. The interactive demo becomes your Codrops submission. Dual use, maximum distribution.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SOURCES -->
+<div class="sources-footer" id="sources">
+  <h2>Research Sources</h2>
+  <div class="sources-list">
+    <a href="https://tympanus.net/codrops/" target="_blank">Codrops — Fueling web creativity since 2009</a>
+    <a href="https://tympanus.net/codrops/category/playground/" target="_blank">Codrops Playground — All interactive experiments</a>
+    <a href="https://tympanus.net/codrops/2026/02/04/making-motion-behave-inside-vladyslav-penevs-production-ready-interaction-systems/" target="_blank">Making Motion Behave: Vladyslav Penev's Interaction Systems (Feb 2026)</a>
+    <a href="https://tympanus.net/codrops/2026/03/09/building-a-scroll-reactive-3d-gallery-with-three-js-velocity-and-mood-based-backgrounds/" target="_blank">Building a Scroll-Reactive 3D Gallery (Mar 2026)</a>
+    <a href="https://tympanus.net/codrops/2026/02/02/building-a-scroll-revealed-webgl-gallery-with-gsap-three-js-astro-and-barba-js/" target="_blank">Scroll-Revealed WebGL Gallery with GSAP, Three.js, Astro and Barba.js (Feb 2026)</a>
+    <a href="https://tympanus.net/codrops/2026/01/07/infinite-canvas-building-a-seamless-pan-anywhere-image-space/" target="_blank">Infinite Canvas: Pan-Anywhere Image Space (Jan 2026)</a>
+    <a href="https://tympanus.net/codrops/2026/01/20/animating-responsive-grid-layout-transitions-with-gsap-flip/" target="_blank">Animating Responsive Grid Layout Transitions with GSAP Flip (Jan 2026)</a>
+    <a href="https://tympanus.net/codrops/2025/12/29/2025-a-very-special-year-in-review/" target="_blank">2025: A Very Special Year in Review — Codrops</a>
+    <a href="https://tympanus.net/codrops/2025/11/27/letting-the-creative-process-shape-a-webgl-portfolio/" target="_blank">Letting the Creative Process Shape a WebGL Portfolio (Nov 2025)</a>
+    <a href="https://tympanus.net/codrops/2025/08/28/interactive-video-projection-mapping-with-three-js/" target="_blank">Interactive Video Projection Mapping with Three.js (Aug 2025)</a>
+    <a href="https://www.creativedevjobs.com/blog/best-threejs-portfolio-examples-2025" target="_blank">Best Three.js Portfolio Examples 2025 — CreativeDevJobs</a>
+    <a href="https://www.lovart.ai/blog/2026-designers-manifesto-ai-creative-director" target="_blank">2026 Designer's Manifesto: AI Creative Director — Lovart</a>
+    <a href="https://www.supernova.io/blog/the-future-of-enterprise-design-systems-2026-trends-and-tools-for-success" target="_blank">The Future of Enterprise Design Systems: 2026 — Supernova</a>
+    <a href="https://agenticengineer.com/top-2-percent-agentic-engineering" target="_blank">Top 2% Agentic Engineering Roadmap 2026</a>
+    <a href="https://thenewstack.io/5-key-trends-shaping-agentic-development-in-2026/" target="_blank">5 Key Trends Shaping Agentic Development in 2026 — The New Stack</a>
+    <a href="https://dev.to/nk2552003/the-anthology-of-a-creative-developer-a-2026-portfolio-56jp" target="_blank">The Anthology of a Creative Developer: A 2026 Portfolio — DEV Community</a>
+    <a href="https://medium.com/@ahmadfaraz00710/elevating-my-developer-portfolio-a-deep-dive-into-next-js-three-js-gsap-and-scss-bac5f711401d" target="_blank">Elevating My Developer Portfolio: Next.js, Three.js, GSAP, and SCSS (Feb 2026)</a>
+    <a href="https://cydstumpel.nl/about/" target="_blank">Cyd Stumpel Portfolio — Creative Developer reference</a>
+  </div>
+</div>
+
+<script>
+  // Progress bar
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (window.scrollY / h * 100) + '%';
+  });
+
+  // Fade in on scroll
+  const faders = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08 });
+  faders.forEach(f => observer.observe(f));
+
+  // Side nav active state
+  const sections = document.querySelectorAll('section[id], div[id="sources"]');
+  const dots = document.querySelectorAll('.nav-dot');
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        dots.forEach(d => d.classList.remove('active'));
+        const match = document.querySelector(`.nav-dot[data-target="${e.target.id}"]`);
+        if (match) match.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => navObserver.observe(s));
+
+  // Dot click scroll
+  dots.forEach(d => {
+    d.addEventListener('click', () => {
+      const target = document.getElementById(d.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Filter buttons
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.card[data-category]');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

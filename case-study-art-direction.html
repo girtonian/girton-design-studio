@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Girtonian — Case Study Art Direction Guide</title>
+<style>
+  :root {
+    --black: #050505;
+    --gray-950: #0a0a0a;
+    --gray-900: #111;
+    --gray-800: #1a1a1a;
+    --gray-700: #242424;
+    --gray-500: #555;
+    --gray-400: #888;
+    --gray-200: #ccc;
+    --white: #f5f5f5;
+    --cyan: #06b6d4;
+    --purple: #8b5cf6;
+    --amber: #f59e0b;
+    --green: #10b981;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 300; line-height: 1.6; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    padding: 1.25rem 3rem; border-bottom: 1px solid var(--gray-800);
+    background: rgba(5,5,5,0.9); backdrop-filter: blur(12px);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { font-size: 0.9rem; letter-spacing: 0.25em; text-transform: uppercase; }
+  .header-sub { font-size: 0.7rem; color: var(--gray-500); letter-spacing: 0.15em; text-transform: uppercase; }
+
+  main { max-width: 1400px; margin: 0 auto; padding: 4rem 3rem; }
+
+  /* HERO */
+  .page-hero { margin-bottom: 5rem; border-bottom: 1px solid var(--gray-800); padding-bottom: 4rem; }
+  .eyebrow { font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--cyan); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .eyebrow::before { content: ''; width: 2rem; height: 1px; background: var(--cyan); opacity: 0.5; }
+  h1 { font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 200; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 1.5rem; }
+  h1 em { font-style: italic; font-family: Georgia, serif; color: var(--cyan); }
+  .page-desc { font-size: 1.1rem; color: var(--gray-400); max-width: 700px; line-height: 1.75; }
+
+  /* PROJECT SECTIONS */
+  .project-section { margin-bottom: 6rem; }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-800); flex-wrap: wrap; }
+  .project-identity { }
+  .project-num { font-size: 0.65rem; color: var(--gray-500); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  h2 { font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 200; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+  .project-subtitle { font-size: 0.9rem; color: var(--gray-400); }
+  .color-swatches { display: flex; gap: 0.5rem; align-items: center; }
+  .swatch { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+  .swatch-label { font-size: 0.65rem; color: var(--gray-500); letter-spacing: 0.1em; margin-top: 0.25rem; text-align: center; }
+  .swatch-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+
+  /* FRAME GRID */
+  .frame-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 1.5rem; }
+
+  .frame-card { background: var(--gray-900); border: 1px solid var(--gray-800); border-radius: 4px; overflow: hidden; }
+  .frame-preview {
+    width: 100%; aspect-ratio: 16/9; overflow: hidden;
+    position: relative; background: var(--gray-800);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .frame-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .frame-preview .placeholder-grad { width: 100%; height: 100%; }
+
+  /* BADGES on frame */
+  .frame-badge {
+    position: absolute; top: 0.75rem; left: 0.75rem;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 2px; font-weight: 500;
+  }
+  .badge-hero { background: rgba(6,182,212,0.9); color: #000; }
+  .badge-secondary { background: rgba(139,92,246,0.85); color: #fff; }
+  .badge-process { background: rgba(245,158,11,0.85); color: #000; }
+  .badge-system { background: rgba(16,185,129,0.85); color: #000; }
+
+  /* Export overlay */
+  .frame-export {
+    position: absolute; bottom: 0.75rem; right: 0.75rem;
+    font-size: 0.6rem; color: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.6); padding: 0.2rem 0.5rem; border-radius: 2px;
+    backdrop-filter: blur(4px);
+  }
+
+  .frame-meta { padding: 1.25rem 1.5rem; }
+  .frame-name { font-size: 1rem; font-weight: 300; margin-bottom: 0.4rem; }
+  .frame-id { font-size: 0.65rem; color: var(--cyan); font-family: monospace; margin-bottom: 0.75rem; }
+  .frame-desc { font-size: 0.82rem; color: var(--gray-400); line-height: 1.6; margin-bottom: 1rem; }
+
+  .frame-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .spec { background: var(--gray-800); padding: 0.5rem 0.75rem; border-radius: 2px; }
+  .spec-label { font-size: 0.6rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.15em; }
+  .spec-val { font-size: 0.8rem; color: var(--white); margin-top: 0.15rem; }
+
+  /* ART DIRECTION BOX */
+  .art-direction {
+    margin-top: 2rem; padding: 1.5rem;
+    border: 1px solid var(--gray-700); border-radius: 4px;
+    background: var(--gray-950);
+  }
+  .art-direction-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; color: var(--amber); margin-bottom: 1rem; }
+  .ad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .ad-item { }
+  .ad-item h4 { font-size: 0.75rem; color: var(--white); font-weight: 400; margin-bottom: 0.4rem; }
+  .ad-item p { font-size: 0.78rem; color: var(--gray-400); line-height: 1.5; }
+
+  /* EXPORT CHECKLIST */
+  .export-checklist { margin-top: 3rem; background: var(--gray-900); border: 1px solid var(--gray-800); border-radius: 4px; overflow: hidden; }
+  .checklist-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--gray-800); display: flex; justify-content: space-between; align-items: center; }
+  .checklist-header h3 { font-size: 1rem; font-weight: 300; }
+  .checklist-header span { font-size: 0.7rem; color: var(--gray-500); }
+  .checklist-table { width: 100%; border-collapse: collapse; }
+  .checklist-table th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gray-500); padding: 0.75rem 1.5rem; text-align: left; border-bottom: 1px solid var(--gray-800); font-weight: 400; }
+  .checklist-table td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-800); font-size: 0.82rem; vertical-align: top; }
+  .checklist-table tr:last-child td { border-bottom: none; }
+  .checklist-table tr:hover td { background: var(--gray-800); }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; background: var(--gray-800); padding: 0.1rem 0.4rem; border-radius: 2px; color: var(--cyan); }
+  .use-badge { display: inline-block; font-size: 0.6rem; padding: 0.15rem 0.5rem; border-radius: 99px; margin-right: 0.3rem; margin-bottom: 0.2rem; }
+  .use-cursor { background: rgba(6,182,212,0.15); color: var(--cyan); }
+  .use-mood { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .use-hero { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .use-case { background: rgba(16,185,129,0.15); color: var(--green); }
+
+  /* FIGMA MISSING */
+  .missing-section { margin-top: 3rem; padding: 2rem; border: 1px dashed var(--gray-700); border-radius: 4px; }
+  .missing-section h3 { font-size: 0.85rem; font-weight: 400; color: var(--amber); margin-bottom: 1rem; }
+  .missing-section p { font-size: 0.82rem; color: var(--gray-400); line-height: 1.6; margin-bottom: 1rem; }
+  .missing-list { list-style: none; }
+  .missing-list li { font-size: 0.8rem; color: var(--gray-400); padding: 0.4rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--gray-800); }
+  .missing-list li::before { content: '→'; color: var(--amber); }
+  .missing-list code { font-size: 0.7rem; }
+
+  /* MOOD PALETTE */
+  .mood-row { display: flex; gap: 0; height: 6px; border-radius: 99px; overflow: hidden; margin-top: 0.5rem; }
+  .mood-block { flex: 1; }
+
+  /* NAV DOTS */
+  #side-nav { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); z-index: 90; display: flex; flex-direction: column; gap: 0.6rem; }
+  .nav-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gray-700); cursor: pointer; transition: all 0.2s; border: 1px solid var(--gray-600); }
+  .nav-dot:hover, .nav-dot.active { background: var(--cyan); border-color: var(--cyan); }
+
+  @media (max-width: 768px) {
+    header, main { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .frame-grid { grid-template-columns: 1fr; }
+    .ad-grid { grid-template-columns: 1fr; }
+    #side-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="side-nav">
+  <div class="nav-dot active" title="Overview" data-target="overview"></div>
+  <div class="nav-dot" title="Kyzen" data-target="kyzen"></div>
+  <div class="nav-dot" title="Merry Modz" data-target="merrymodz"></div>
+  <div class="nav-dot" title="Export Guide" data-target="export"></div>
+</nav>
+
+<header>
+  <span class="logo">Girtonian — Case Study Art Direction</span>
+  <span class="header-sub">6 frames captured · 2 projects · March 2026</span>
+</header>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <div class="page-hero" id="overview">
+    <div class="eyebrow">Art Direction Guide</div>
+    <h1>Your work is<br><em>portfolio gold</em></h1>
+    <p class="page-desc">
+      I've pulled frames directly from your Figma files and mapped each one to your
+      portfolio interaction patterns — cursor preview thumbnails, mood gallery backgrounds,
+      and case study hero crops. Below is your complete image guide with Figma node IDs,
+      export specs, and art direction for each screen.
+    </p>
+  </div>
+
+  <!-- PROJECT KYZEN -->
+  <div class="project-section" id="kyzen">
+    <div class="project-header">
+      <div class="project-identity">
+        <div class="project-num">Project 01</div>
+        <h2>Project Kyzen</h2>
+        <p class="project-subtitle">Web3 avatar customization platform · 50,000 DAU · Impact Theory</p>
+        <div class="mood-row" style="margin-top:1rem; width:200px;">
+          <div class="mood-block" style="background:#0d1117;"></div>
+          <div class="mood-block" style="background:#1a2332;"></div>
+          <div class="mood-block" style="background:#06b6d4;"></div>
+          <div class="mood-block" style="background:#eab308;"></div>
+          <div class="mood-block" style="background:#c084fc;"></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.65rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.2em; margin-bottom:0.75rem;">Palette extracted</div>
+        <div class="color-swatches">
+          <div class="swatch-wrap"><div class="swatch" style="background:#0d1117;"></div><div class="swatch-label">#0D1117</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#1a2332;"></div><div class="swatch-label">#1A2332</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#06b6d4;"></div><div class="swatch-label">#06B6D4</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#eab308;"></div><div class="swatch-label">#EAB308</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#c084fc;"></div><div class="swatch-label">#C084FC</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frame-grid">
+
+      <!-- FEATURED BUNDLE -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <!-- Kyzen Featured Bundle - 3D avatar sci-fi store -->
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #0d1117 0%, #1a2332 40%, #0a1628 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">⚡</div>
+            <div style="font-size:0.7rem; color:#06b6d4; letter-spacing:0.2em; text-transform:uppercase;">Kyzen Store — Featured Bundle</div>
+            <div style="font-size:0.65rem; color:#555;">3D Avatar · Sci-fi Dark · Hexagonal items</div>
+          </div>
+          <span class="frame-badge badge-hero">★ Hero Frame</span>
+          <span class="frame-export">Node 354:1456</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">STORE — Featured Bundle</div>
+          <div class="frame-id">File: MCePma18DS6G87yBww77fB · Node: 354:1456</div>
+          <p class="frame-desc">
+            Full-screen store UI with 3D avatar center-stage in a spotlight against deep sci-fi
+            blue-black. Hexagonal item thumbnails on left, GIRTONIAN username in top nav.
+            Cyan Purchase CTA. This is your single most visually distinctive frame.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Full frame, 16:9</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">1920 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">560 × 315px</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0d1117 → #1a2332</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INDIVIDUAL ITEM -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #0e1724 0%, #162236 40%, #1a2d4a 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">🎮</div>
+            <div style="font-size:0.7rem; color:#06b6d4; letter-spacing:0.2em; text-transform:uppercase;">Individual Item Store</div>
+            <div style="font-size:0.65rem; color:#555;">Single avatar · Part of Bundle</div>
+          </div>
+          <span class="frame-badge badge-secondary">Secondary</span>
+          <span class="frame-export">Node 1:534</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">STORE — Individual Item (Bundle)</div>
+          <div class="frame-id">File: MCePma18DS6G87yBww77fB · Node: 1:534</div>
+          <p class="frame-desc">
+            Clean individual item page — single item hexagon icon, 800 Kyzen tokens price,
+            "Part of the UNLEASH THE DRAGON BUNDLE" callout with View Bundle CTA.
+            Shows the information hierarchy and token economy design.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Right half (avatar)</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">960 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">560 × 315px, full</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0e1724 → #1a2d4a</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ART DIRECTION FOR KYZEN -->
+    <div class="art-direction">
+      <div class="art-direction-title">Art direction — How to present Kyzen</div>
+      <div class="ad-grid">
+        <div class="ad-item">
+          <h4>🎯 Cursor Preview Thumbnail</h4>
+          <p>Export <code>354:1456</code> at 2× scale. Crop to the center third — just the avatar standing in the spotlight. The sci-fi dark background + spotlight makes it unmistakable even at 280px wide. No text overlay needed.</p>
+        </div>
+        <div class="ad-item">
+          <h4>🌊 Mood Gallery Background</h4>
+          <p>Kyzen's mood color is deep navy → slate blue (<code>#0d1117</code> → <code>#1a2332</code>). When scrolling into Kyzen in the mood gallery, the page background should cold-shift to this palette. Pair with a subtle scanline texture.</p>
+        </div>
+        <div class="ad-item">
+          <h4>📖 Case Study Story Arc</h4>
+          <p>Lead with the avatar (proof of concept), then show the hexagonal item grid (design system), then the token economy (business impact). End with the 50k DAU stat highlighted. The 3D avatar is your narrative anchor — it earned that "GIRTONIAN" username in the top nav.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW FRAMES CAPTURED -->
+    <div class="frame-grid" style="margin-top:2rem;">
+
+      <!-- PHASE 3.7 DASHBOARD — "GIRTONIAN" -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #0a1628 0%, #122040 40%, #1a3060 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">🎮</div>
+            <div style="font-size:0.7rem; color:#06b6d4; letter-spacing:0.2em; text-transform:uppercase;">GIRTONIAN Dashboard</div>
+            <div style="font-size:0.65rem; color:#555;">Your name · Your avatar · Level 9</div>
+          </div>
+          <span class="frame-badge badge-hero">★★ Your Best Frame</span>
+          <span class="frame-export">Node 5297:2378</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">Phase 3.7 — Player Dashboard (GIRTONIAN)</div>
+          <div class="frame-id">File: bY3QdncdYQdEt3vIDZCBWr · Node: 5297:2378</div>
+          <p class="frame-desc">
+            Your own username "GIRTONIAN" displayed on the player overview screen — LEVEL 9 with XP bar,
+            Weekly Challenges panel (including a 100% complete "Claim" challenge), a fully 3D styled character
+            center-stage (crystal armor, purple hammer, angelic wings), YOUR PARTY section with your avatar,
+            and a Bruce Lee collaboration banner. Light blue crystalline environment. This is the definitive
+            proof-of-work image: <em>your name, in a real shipped game UI, that you designed.</em>
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Full frame, 16:9</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">1920 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">Crop to avatar only (center 50%)</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0a1628 → #1a3060</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAP EDITOR -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #1a2e1a 0%, #0d2010 40%, #102818 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">🗺️</div>
+            <div style="font-size:0.7rem; color:#4ade80; letter-spacing:0.2em; text-transform:uppercase;">Map Editor — 3D World Builder</div>
+            <div style="font-size:0.65rem; color:#555;">Floating islands · Hex grid · Tool palette</div>
+          </div>
+          <span class="frame-badge badge-system">★★ Systems Proof</span>
+          <span class="frame-export">Node 8267:1613</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">Kyzen Map Editor — Hex World Builder</div>
+          <div class="frame-id">File: u6qr6ko1NjHwuxEw5VZNgj · Node: 8267:1613</div>
+          <p class="frame-desc">
+            A custom 3D world-building editor. Left panel: HEX TOOLS & SEARCH with asset categories
+            (All, Topper, Interactive, Side, Base, Bots) and terrain filters (Metal, Grass, Sand, Wood,
+            Cobblestone, Ice, Lava). Asset browser with 3D tile thumbnails. Main viewport: lush floating
+            islands with waterfalls, trees, a dragon skeleton, and a neon-green hex selection outline
+            on an active terrain tile. Map Budget bar: 1,500/10,000. This is elite-level UX design —
+            very few portfolio designers can show a custom creator tool they built.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Full frame — show both panels</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">1920 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">Right viewport (islands) 560×315</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0d2010 → #1a2e1a (forest green)</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="art-direction" style="margin-top:2rem; border-color: var(--cyan);">
+      <div class="art-direction-title" style="color:var(--cyan);">Art direction update — The 3 tiers of Kyzen storytelling</div>
+      <div class="ad-grid">
+        <div class="ad-item">
+          <h4>Tier 1 — Emotional Proof</h4>
+          <p>The "GIRTONIAN" dashboard is your opening frame. Use it full-bleed. Let visitors see your username before they see your name in the bio. That detail does more work than any case study paragraph.</p>
+        </div>
+        <div class="ad-item">
+          <h4>Tier 2 — Systems Proof</h4>
+          <p>The Map Editor shows you designed for creators, not just players. Position it as "I built the tool that lets players build the world." Two audiences: players + game designers. This is the rarest design credential you have.</p>
+        </div>
+        <div class="ad-item">
+          <h4>Tier 3 — Commerce Proof</h4>
+          <p>The Store UI (Featured Bundle) closes the arc — you designed the commerce layer that monetizes 50k daily users. End with the DAU and retention numbers. The story goes: identity → creation → commerce.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="missing-section" style="margin-top:1.5rem;">
+      <h3>ℹ FigJam process boards — still accessible when needed</h3>
+      <ul class="missing-list">
+        <li>Kyzen Avatar Creation Flow &nbsp;<code>A6kpgtIGONX3XQN4guJ07G</code>&nbsp; Useful for UX process documentation in case studies</li>
+        <li>Kyzen Marketplace Flow Diagram &nbsp;<code>TqUrfKMA0h9pNLut5tnDF8</code>&nbsp; Good for showing information architecture breadth</li>
+        <li>Kyzen Process Flow Overview &nbsp;<code>VdJZehHjPFkYfXG1WicfE5</code>&nbsp; End-to-end system design view</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROJECT MERRY MODZ -->
+  <div class="project-section" id="merrymodz">
+    <div class="project-header">
+      <div class="project-identity">
+        <div class="project-num">Project 02</div>
+        <h2>Merry Modz</h2>
+        <p class="project-subtitle">Holiday matching card game · Dark Forest Run mini-game · Seasonal gaming IP</p>
+        <div class="mood-row" style="margin-top:1rem; width:200px;">
+          <div class="mood-block" style="background:#7b1a2c;"></div>
+          <div class="mood-block" style="background:#3b82d4;"></div>
+          <div class="mood-block" style="background:#60c0ff;"></div>
+          <div class="mood-block" style="background:#2d8c4e;"></div>
+          <div class="mood-block" style="background:#fbbf24;"></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.65rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.2em; margin-bottom:0.75rem;">Palette extracted</div>
+        <div class="color-swatches">
+          <div class="swatch-wrap"><div class="swatch" style="background:#7b1a2c;"></div><div class="swatch-label">#7B1A2C</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#5ab4f0;"></div><div class="swatch-label">#5AB4F0</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#2d6e3e;"></div><div class="swatch-label">#2D6E3E</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#fbbf24;"></div><div class="swatch-label">#FBBF24</div></div>
+          <div class="swatch-wrap"><div class="swatch" style="background:#e11d48;"></div><div class="swatch-label">#E11D48</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frame-grid">
+
+      <!-- FINAL SCORE ENVIRONMENT -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(180deg, #5ab4f0 0%, #87ceeb 40%, #b0e0ff 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">🎄</div>
+            <div style="font-size:0.7rem; color:#1a3a5c; letter-spacing:0.2em; text-transform:uppercase;">Final Score Screen</div>
+            <div style="font-size:0.65rem; color:#2d5a8a;">Snowman · Christmas tree · 10,150pts</div>
+          </div>
+          <span class="frame-badge badge-hero">★ Hero Frame</span>
+          <span class="frame-export">Node 668:192</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">Snow Environment — Final Score</div>
+          <div class="frame-id">File: FhaMpCCfiBi4bbisCowyk2 · Node: 668:192</div>
+          <p class="frame-desc">
+            Full-screen holiday game environment: bright sky-blue sky, animated snowman character
+            (left), decorated Christmas tree character (right), scoreboards in festive wooden
+            signage style. FINAL SCORE: 10,150 with bonus breakdown tiles in green, gold, red, blue, purple.
+            Spectacular art that instantly communicates "fun, polished, seasonal."
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Full frame, 16:9</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">1920 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">560 × 315px</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#87ceeb → #5ab4f0</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENT UNLOCKED -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #1a3060 0%, #0d1f4a 50%, #2d4a8a 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">❄️</div>
+            <div style="font-size:0.7rem; color:#60c0ff; letter-spacing:0.2em; text-transform:uppercase;">Achievement Unlocked</div>
+            <div style="font-size:0.65rem; color:#4a8ab0;">Snowball Sniper · Glowing badge</div>
+          </div>
+          <span class="frame-badge badge-hero">★ Hero Frame</span>
+          <span class="frame-export">Node 1742:118</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">Badge Unlocked — Snowball Sniper</div>
+          <div class="frame-id">File: FhaMpCCfiBi4bbisCowyk2 · Node: 1742:118</div>
+          <p class="frame-desc">
+            Cinematic achievement screen. "Achievement Unlocked" in glowing neon script,
+            blurred environment behind. Giant glowing blue snowflake badge (6-pointed, angry face).
+            "SNOWBALL SNIPER" in bold white. This is peak game UI moment design —
+            aspirational, celebratory, memorable.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Full frame, keep blur bg</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">1920 × 1080px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">560 × 315px, full</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0d1f4a → #1a3060</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MERRY MEMORY MODZ COVER -->
+      <div class="frame-card">
+        <div class="frame-preview">
+          <div class="placeholder-grad" style="background: linear-gradient(135deg, #7b1a2c 0%, #5c1420 50%, #3d0d16 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem;">
+            <div style="font-size:3rem;">🎴</div>
+            <div style="font-size:0.7rem; color:#ff6b8a; letter-spacing:0.2em; text-transform:uppercase;">Memory Modz 2023</div>
+            <div style="font-size:0.65rem; color:#8b3a4a;">Burgundy · Neon title · Brand cover</div>
+          </div>
+          <span class="frame-badge badge-system">Brand Cover</span>
+          <span class="frame-export">Node 1:6 (zB1Z4eXuYBRP9Sz8ykQHoh)</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">Merry Memory Modz — Project Cover</div>
+          <div class="frame-id">File: zB1Z4eXuYBRP9Sz8ykQHoh · Node: 1:6</div>
+          <p class="frame-desc">
+            Deep burgundy-crimson background. "Merry Memory Modz 2023" in large sans-serif left.
+            Right side: neon sign version of the logo (cyan/blue glow on dark). Merry Modz brand
+            mark top-left with gradient red logo. Great for brand storytelling section.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best crop</div><div class="spec-val">Right half (neon logo)</div></div>
+            <div class="spec"><div class="spec-label">Export size</div><div class="spec-val">800 × 480px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">560 × 315px, full</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#7b1a2c → #3d0d16</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ART DIRECTION FOR MERRY MODZ -->
+    <div class="art-direction">
+      <div class="art-direction-title">Art direction — How to present Merry Modz</div>
+      <div class="ad-grid">
+        <div class="ad-item">
+          <h4>🎯 Cursor Preview Thumbnail</h4>
+          <p>Use <code>1742:118</code> (Achievement Unlocked) as the primary thumbnail — the glowing badge on dark is instantly readable at small sizes. The neon script "Achievement Unlocked" reads as sophisticated game design. Second choice: the Final Score screen for warmth/joy.</p>
+        </div>
+        <div class="ad-item">
+          <h4>🌊 Mood Gallery Background</h4>
+          <p>Merry Modz has two distinct moods: the warm holiday sky (<code>#87ceeb</code>) for game environment screens, and the deep navy (<code>#0d1f4a</code>) for achievement moments. Let the gallery shift between them as you scroll through multiple frames.</p>
+        </div>
+        <div class="ad-item">
+          <h4>📖 Case Study Story Arc</h4>
+          <p>Lead with the brand cover (sets tone), move to the Final Score environment (establishes scale and polish), land on Achievement Unlocked (emotional high). Close with the matching card game UI (product logic). This arc takes the reader from "what is this" → "I want to play this."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MERRYMODZ.IO LANDING PAGE — NEW -->
+    <div class="frame-grid" style="margin-top:2rem;">
+      <div class="frame-card" style="grid-column: 1 / -1;">
+        <div class="frame-preview" style="aspect-ratio: 9/16; max-height: 520px;">
+          <div class="placeholder-grad" style="background: linear-gradient(180deg, #0a0a2e 0%, #1a0a3e 25%, #0d1a5c 50%, #1a1040 75%, #0a0820 100%); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.5rem; height:100%;">
+            <div style="font-size:3rem;">🎄</div>
+            <div style="font-size:0.7rem; color:#e879a0; letter-spacing:0.2em; text-transform:uppercase;">MerryModz.io Landing Page</div>
+            <div style="font-size:0.65rem; color:#555;">Full scroll · 6 characters · Complete brand system</div>
+          </div>
+          <span class="frame-badge badge-hero">★★ Brand System Proof</span>
+          <span class="frame-export">Node 956:603</span>
+        </div>
+        <div class="frame-meta">
+          <div class="frame-name">MerryModz.io — Complete Product Landing Page</div>
+          <div class="frame-id">File: 4DOkJ6LGEffW7CixvfOE5V · Node: 956:603</div>
+          <p class="frame-desc">
+            Full vertical landing page for the MerryModz game brand. A complete brand system end-to-end:
+            hero section ("Snéllo Takes on the Dark Forest"), game proposition ("Grab Life By The Snowballz"),
+            "Meet the Cast" character cards — BARK, KATARINA, SMIBO, KIP, SANTA, KRAMPUS — each with
+            distinct personalities and visual styles. BARK DECORATOR minigame showcase. MERRY MEMORY MODZ
+            card matching game. "Welcome Finnando" new character onboarding. FAQ section. Community Cheer
+            Discord CTA. Holiday dark-sky atmosphere with aurora-style lighting throughout. This is a
+            complete product marketing brand system, not just UI screens.
+          </p>
+          <div class="frame-specs">
+            <div class="spec"><div class="spec-label">Best use</div><div class="spec-val">Scroll as reveal (parallax)</div></div>
+            <div class="spec"><div class="spec-label">Export — hero crop</div><div class="spec-val">Top 1/4, 1440×810px</div></div>
+            <div class="spec"><div class="spec-label">Cursor thumb</div><div class="spec-val">Hero section crop, 560×315</div></div>
+            <div class="spec"><div class="spec-label">Mood bg color</div><div class="spec-val">#0a0a2e → #1a1040 (aurora night)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-direction" style="margin-top:2rem; border-color: #e879a0; background: rgba(232,121,160,0.04);">
+      <div class="art-direction-title" style="color:#e879a0;">Art direction — MerryModz as Brand Architecture proof</div>
+      <div class="ad-grid">
+        <div class="ad-item">
+          <h4>🎯 What makes this unique</h4>
+          <p>You designed the full brand IP — not just a UI but a cast of characters, each with names, visual identities, and roles in the game world. BARK, KATARINA, KRAMPUS — these are owned characters. That's brand creative direction, not UX work.</p>
+        </div>
+        <div class="ad-item">
+          <h4>📱 Scroll interaction opportunity</h4>
+          <p>The vertical landing page is perfect for a scroll-triggered parallax reveal on your portfolio. Each section scrolls in with its own mood — the aurora hero, the bright character cards, the deep Memory Modz section. The page structure maps directly to the Codrops scroll-reactive mood gallery pattern.</p>
+        </div>
+        <div class="ad-item">
+          <h4>💬 LinkedIn hot take</h4>
+          <p>"I designed a game world with 6 original characters, a matching card game, a holiday runner, and a full landing page. The brief was 'make it festive.' The result is a brand IP that can scale." Then show the character card grid.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="missing-section" style="margin-top:1.5rem;">
+      <h3>ℹ Dark Forest hero section — one more crop available</h3>
+      <ul class="missing-list">
+        <li>Dark Forest Run Flow page 2 &nbsp;<code>FhaMpCCfiBi4bbisCowyk2</code>&nbsp; Node 0:319 — the full Merry Modz flow diagram, useful for process storytelling</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EXPORT CHECKLIST -->
+  <div id="export">
+    <div style="margin-bottom:2rem;">
+      <div class="eyebrow">Step-by-step</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,3rem); font-weight:200; letter-spacing:-0.01em;">Your complete<br><em style="font-family:Georgia,serif; color:var(--cyan);">export guide</em></h2>
+    </div>
+
+    <div class="export-checklist">
+      <div class="checklist-header">
+        <h3>All frames — where each one goes in your portfolio</h3>
+        <span>9 frames captured · 0 more needed</span>
+      </div>
+      <table class="checklist-table">
+        <thead>
+          <tr>
+            <th>Frame</th>
+            <th>Figma Export</th>
+            <th>Export Spec</th>
+            <th>Use in</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Kyzen Featured Bundle</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">3D avatar, hexagonal items, sci-fi store</span></td>
+            <td><code>MCePma18DS6G87yBww77fB</code><br><code>node: 354:1456</code></td>
+            <td>PNG, 2×, full frame<br>1920×1080</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+              <span class="use-badge use-mood">Mood Gallery</span>
+              <span class="use-badge use-hero">Case Study Hero</span>
+            </td>
+            <td style="color:var(--cyan);">⭐ Do first</td>
+          </tr>
+          <tr>
+            <td><strong>Achievement Unlocked</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Glowing snowflake badge, neon script</span></td>
+            <td><code>FhaMpCCfiBi4bbisCowyk2</code><br><code>node: 1742:118</code></td>
+            <td>PNG, 2×, full frame<br>1920×1080</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+              <span class="use-badge use-mood">Mood Gallery</span>
+            </td>
+            <td style="color:var(--cyan);">⭐ Do first</td>
+          </tr>
+          <tr>
+            <td><strong>Final Score Screen</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Snowman + tree, holiday game environment</span></td>
+            <td><code>FhaMpCCfiBi4bbisCowyk2</code><br><code>node: 668:192</code></td>
+            <td>PNG, 2×, full frame<br>1920×1080</td>
+            <td>
+              <span class="use-badge use-mood">Mood Gallery</span>
+              <span class="use-badge use-case">Case Study</span>
+            </td>
+            <td style="color:var(--amber);">Do second</td>
+          </tr>
+          <tr>
+            <td><strong>Kyzen Individual Item</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Single item view, token economy</span></td>
+            <td><code>MCePma18DS6G87yBww77fB</code><br><code>node: 1:534</code></td>
+            <td>PNG, 2×, right-half crop<br>960×1080</td>
+            <td>
+              <span class="use-badge use-case">Case Study</span>
+            </td>
+            <td style="color:var(--amber);">Do second</td>
+          </tr>
+          <tr>
+            <td><strong>Memory Modz Cover</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Burgundy brand cover, neon logo</span></td>
+            <td><code>zB1Z4eXuYBRP9Sz8ykQHoh</code><br><code>node: 1:6</code></td>
+            <td>PNG, 1×, right-half crop<br>800×480</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+            </td>
+            <td style="color:var(--gray-500);">Do third</td>
+          </tr>
+          <tr>
+            <td><strong>GIRTONIAN Dashboard ★★</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Your name + 3D avatar in-game — most powerful frame</span></td>
+            <td><code>bY3QdncdYQdEt3vIDZCBWr</code><br><code>node: 5297:2378</code></td>
+            <td>PNG, 2×, full frame<br>1920×1080</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+              <span class="use-badge use-hero">Case Study Hero</span>
+              <span class="use-badge use-mood">Mood Gallery</span>
+            </td>
+            <td style="color:var(--cyan);">⭐ Do first</td>
+          </tr>
+          <tr>
+            <td><strong>Map Editor — Hex World Builder ★★</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Custom 3D creator tool — rarest design credential</span></td>
+            <td><code>u6qr6ko1NjHwuxEw5VZNgj</code><br><code>node: 8267:1613</code></td>
+            <td>PNG, 2×, full frame<br>1920×1080</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+              <span class="use-badge use-hero">Case Study Hero</span>
+            </td>
+            <td style="color:var(--cyan);">⭐ Do first</td>
+          </tr>
+          <tr>
+            <td><strong>MerryModz.io Landing Page ★★</strong><br><span style="font-size:0.75rem;color:var(--gray-500);">Complete brand system — 6 characters, full product site</span></td>
+            <td><code>4DOkJ6LGEffW7CixvfOE5V</code><br><code>node: 956:603</code></td>
+            <td>PNG, 1×, top 1/4 crop<br>1440×810px</td>
+            <td>
+              <span class="use-badge use-cursor">Cursor Preview</span>
+              <span class="use-badge use-case">Case Study</span>
+              <span class="use-badge use-mood">Mood Gallery</span>
+            </td>
+            <td style="color:var(--cyan);">⭐ Do first</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- HOW TO EXPORT -->
+    <div style="margin-top:3rem; display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;">
+      <div style="background:var(--gray-900); border:1px solid var(--gray-800); padding:2rem; border-radius:4px;">
+        <div style="font-size:0.65rem; color:var(--cyan); text-transform:uppercase; letter-spacing:0.3em; margin-bottom:1rem;">How to export in Figma</div>
+        <ol style="list-style:none; counter-reset:steps;">
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">1.</span>Open the file → select the frame by node ID
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">2.</span>Right panel → Export section → <code>+</code> button
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">3.</span>Set to PNG, 2× scale, no suffix
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">4.</span>Click Export → save to your workspace folder
+          </li>
+        </ol>
+      </div>
+
+      <div style="background:var(--gray-900); border:1px solid var(--gray-800); padding:2rem; border-radius:4px;">
+        <div style="font-size:0.65rem; color:var(--cyan); text-transform:uppercase; letter-spacing:0.3em; margin-bottom:1rem;">How to get frame node IDs</div>
+        <ol style="list-style:none;">
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">1.</span>Open the Figma file in browser
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">2.</span>Click on the frame you want
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; border-bottom:1px solid var(--gray-800); display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">3.</span>URL now shows <code>?node-id=354-1456</code>
+          </li>
+          <li style="font-size:0.82rem; color:var(--gray-400); padding:0.6rem 0; display:flex; gap:0.75rem;">
+            <span style="color:var(--cyan); min-width:1.2rem;">4.</span>Copy that full URL and paste it to me — I'll pull it instantly
+          </li>
+        </ol>
+      </div>
+
+      <div style="background:var(--gray-900); border:1px solid var(--gray-800); padding:2rem; border-radius:4px;">
+        <div style="font-size:0.65rem; color:var(--cyan); text-transform:uppercase; letter-spacing:0.3em; margin-bottom:1rem;">Thumbnail crop guide</div>
+        <div style="font-size:0.82rem; color:var(--gray-400); line-height:1.7;">
+          <p style="margin-bottom:0.75rem;">All cursor preview thumbnails should be <strong style="color:var(--white);">560 × 315px</strong> (16:9 ratio). The preview card in the demo is 280px wide, so 560px gives you a crisp 2× retina image.</p>
+          <p>For project thumbnails with centered characters (Kyzen avatar), crop to include the full character with equal negative space left/right. For game environments (Final Score), use the full frame — the compositions are already cinematic.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 4rem 0 2rem; border-top: 1px solid var(--gray-800); margin-top: 5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+    <span style="font-size:0.75rem; color:var(--gray-500);">Girtonian LLC — Case Study Art Direction Guide · March 2026</span>
+    <a href="cursor-preview-demo.html" style="font-size:0.75rem; color:var(--cyan); text-decoration:none;">← Back to Cursor Preview Demo</a>
+  </div>
+
+</main>
+
+<script>
+  // Nav dots
+  const dots = document.querySelectorAll('.nav-dot');
+  const targets = ['overview', 'kyzen', 'merrymodz', 'export'];
+  const sections = targets.map(id => document.getElementById(id));
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = sections.indexOf(e.target);
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.2 });
+  sections.forEach(s => s && obs.observe(s));
+  dots.forEach((d, i) => d.addEventListener('click', () => sections[i]?.scrollIntoView({ behavior: 'smooth' })));
+</script>
+
+</body>
+</html>
