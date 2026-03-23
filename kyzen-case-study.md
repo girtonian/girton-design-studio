@@ -30,7 +30,7 @@ The game sits at an unusual intersection:
 
 Player progression isn't just mechanical. The game uses a K.OS mission system — quests layered over combat that push players toward personal development, not just leaderboard rank.
 
-**Avatar customization is central to the experience.** Project Kyzen launched with a custom Bruce Lee avatar — designed in collaboration with the Bruce Lee estate, sold as a featured "Jin and Bruce Lee" bundle in Vogue's Vault (the in-game store) — as a signal of the game's ambitions: characters aren't just skins, they're expressions of aspiration.
+**Avatar customization is central to the experience.** Project Kyzen launched with a custom Bruce Lee avatar — designed in collaboration with the Bruce Lee estate, sold as a featured "Ion and Bruce Lee" bundle in Vogue's Vault (the in-game store) — as a signal of the game's ambitions: characters aren't just skins, they're expressions of aspiration.
 
 The Merry Modz integration extended this further: 10,000 Merry Modz NFT characters became playable avatars in Kyzen, linking a Web3 narrative franchise directly to the game's character ecosystem.
 
@@ -120,7 +120,7 @@ Project Kyzen launched publicly with Mini Battle Arenas in August 2024. The Bruc
 *[Insert: Final HUD design — 2:31 timer, health bars, ability coins, in the lush arena environment]*
 *[Insert: Avatar Select — GIRTONIAN profile with Bruce Lee avatar in black kung fu outfit]*
 *[Insert: Game mode selection — Energy Arena, Color Control, Golden Ball, Duel with character art and bamboo frame]*
-*[Insert: Vogue's Vault store — Jin and Bruce Lee featured bundle + K.OINS purchase tiers]*
+*[Insert: Vogue's Vault store — Ion and Bruce Lee featured bundle + K.OINS purchase tiers]*
 *[Insert: Emote wheel — "Alfonzo Freshness" radial selector, default and selected states]*
 *[Insert: Map Designer Tool — floating island terrain editor with asset panel]*
 *[Insert: Phase 1 User Flow FigJam — complete game loop diagram]*
