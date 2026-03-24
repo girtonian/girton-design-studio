@@ -21,7 +21,7 @@ export const kyzenCaseStudy: CaseStudyContent = {
         'The game sits at an unusual intersection: competitive like Fortnite, accessible like Fall Guys, philosophically-driven like nothing else in the genre.',
         'Player progression isn\'t just mechanical. The game uses a K.OS mission system — quests layered over combat that push players toward personal development, not just leaderboard rank.',
         '• Avatar customization is central to the experience',
-        '• Bruce Lee collaboration — "Jin and Bruce Lee" bundle in Vogue\'s Vault',
+        '• Bruce Lee collaboration — "Ion and Bruce Lee" bundle in Vogue\'s Vault',
         '• Merry Modz NFT integration: 10,000 characters as playable avatars',
         '• Community Corner: user-created maps accessible via map codes',
       ],
